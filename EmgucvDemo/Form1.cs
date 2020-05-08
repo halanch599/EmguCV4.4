@@ -1,0 +1,735 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Emgu.CV;
+using Emgu.CV.Features2D;
+using Emgu.CV.Structure;
+using Emgu.CV.Util;
+using Emgu.CV.Flann;
+using Emgu.CV.Cuda;
+using System.Runtime.InteropServices;
+
+namespace EmgucvDemo
+{
+    public partial class Form1 : Form
+    {
+        Dictionary<string, Image<Bgr, byte>> imgList;
+        Rectangle rect;
+        Point StartROI;
+        bool Selecting, MouseDown;
+        public Form1()
+        {
+            InitializeComponent();
+            Selecting = false;
+            rect = Rectangle.Empty;
+            imgList = new Dictionary<string, Image<Bgr, byte>>();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                imgList.Clear();
+                OpenFileDialog dialog = new OpenFileDialog();
+                if(dialog.ShowDialog() == DialogResult.OK)
+                {
+                    var img = new Image<Bgr, byte>(dialog.FileName);
+                    AddImage(img, "Input");
+                    pictureBox1.Image = img.AsBitmap();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void AddImage(Image<Bgr, byte> img, string keyname )
+        {
+            if(!treeView1.Nodes.ContainsKey(keyname))
+            {
+                TreeNode node = new TreeNode(keyname);
+                node.Name = keyname;
+                treeView1.Nodes.Add(node);
+                treeView1.SelectedNode = node;
+            }
+
+            if(!imgList.ContainsKey(keyname))
+            {
+                imgList.Add(keyname, img);
+            }
+            else
+            {
+                imgList[keyname] = img;
+            }
+        }
+
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if(Selecting)
+            {
+                MouseDown = true;
+                StartROI = e.Location;
+            }
+        }
+
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(Selecting)
+            {
+                int width = Math.Max(StartROI.X, e.X) - Math.Min(StartROI.X, e.X);
+                int height = Math.Max(StartROI.Y, e.Y) - Math.Min(StartROI.Y, e.Y);
+                rect = new Rectangle(Math.Min(StartROI.X, e.X),
+                    Math.Min(StartROI.Y, e.Y),
+                    width,
+                    height);
+                Refresh();
+            }
+        }
+
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        {
+            if(MouseDown)
+            {
+                using (Pen pen = new Pen(Color.Red, 3))
+                {
+                    e.Graphics.DrawRectangle(pen, rect);
+                }
+            }
+        }
+
+        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        {
+            if(Selecting)
+            {
+                Selecting = false;
+                MouseDown = false;
+            }
+        }
+
+        private void getRegionOfROIToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null)
+                    return;
+
+                if (rect == Rectangle.Empty)
+                    return;
+
+                var img = new Bitmap(pictureBox1.Image).ToImage<Bgr, byte>();
+
+                img.ROI = rect;
+                var imgROI = img.Copy();
+                img.ROI = Rectangle.Empty;
+
+                pictureBox1.Image = imgROI.ToBitmap();
+                AddImage(imgROI, "ROI Image");
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            try
+            {
+                pictureBox1.Image = imgList[e.Node.Text].AsBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void selectROIToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Selecting = true;
+        }
+
+        private void gaussianBlurROIToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null)
+                    return;
+
+                if (rect == Rectangle.Empty)
+                    return;
+
+                var img = new Bitmap(pictureBox1.Image)
+                    .ToImage<Bgr, byte>();
+
+                img.ROI = rect;
+                var img2 = img.Copy();
+                var imgSmooth = img2.SmoothGaussian(25);
+
+                img.SetValue(new Bgr(1, 1, 1));
+                img._Mul(imgSmooth);
+
+                img.ROI = Rectangle.Empty;
+                pictureBox1.Image = img.AsBitmap();
+
+                AddImage(img, "GaussianBlur");
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void cannyEdgesROIToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null)
+                    return;
+
+                if (rect == Rectangle.Empty)
+                    return;
+
+                var img = new Bitmap(pictureBox1.Image)
+                    .ToImage<Bgr, byte>();
+
+                img.ROI = rect;
+                var img2 = img.Copy();
+                var imgCanny = img2.SmoothGaussian(5).Canny(100,50);
+                var imgBgr = imgCanny.Convert<Bgr, byte>();
+
+                img.SetValue(new Bgr(1, 1, 1));
+                img._Mul(imgBgr);
+
+                img.ROI = Rectangle.Empty;
+
+                pictureBox1.Image = img.AsBitmap();
+                AddImage(img, "Canny Edge");
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void matchingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image==null || rect ==null)
+                {
+                    return;
+                }
+
+                var imgScene = imgList["Input"].Clone();
+                var template = new Bitmap(pictureBox1.Image)
+                    .ToImage<Bgr, byte>();
+
+
+                Mat imgout = new Mat();
+
+                CvInvoke.MatchTemplate(imgScene, template, imgout, Emgu.CV.CvEnum.TemplateMatchingType.CcorrNormed);
+
+                double minVal = 0.0;
+                double maxVal = 0.0;
+                Point minLoc = new Point();
+                Point maxLoc = new Point();
+
+                CvInvoke.MinMaxLoc(imgout, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
+                Rectangle r = new Rectangle(maxLoc, template.Size);
+                CvInvoke.Rectangle(imgScene, r, new MCvScalar(255, 0, 0), 3);
+                pictureBox1.Image = imgScene.AsBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void resizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if(!imgList.ContainsKey("ROI Image"))
+                {
+                    MessageBox.Show("Please select a template");
+                    return;
+                }
+
+                var img = new Bitmap(pictureBox1.Image)
+                    .ToImage<Bgr, byte>();
+
+                img = img.Resize(1.25, Emgu.CV.CvEnum.Inter.Cubic);
+                pictureBox1.Image = img.AsBitmap();
+                AddImage(img, "Template Resized");
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void rotationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!imgList.ContainsKey("ROI Image"))
+                {
+                    MessageBox.Show("Please select a template");
+                    return;
+                }
+
+                var img = new Bitmap(pictureBox1.Image)
+                    .ToImage<Bgr, byte>();
+
+                img = img.Rotate(90, new Bgr(0, 0, 0), false);
+                pictureBox1.Image = img.AsBitmap();
+                AddImage(img, "Template Rotated");
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void multiScaleTemplateMatchingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image==null || rect ==null)
+                {
+                    return;
+                }
+
+                var imgScene = imgList["Input"].Clone();
+                var template = new Bitmap(pictureBox1.Image)
+                    .ToImage<Bgr, byte>();
+                // multiscale logic
+
+                Rectangle r = Rectangle.Empty;
+                double GlobalminVal = float.MaxValue;
+
+                for (float scale = 0.5f;  scale <=1.50;  scale+=0.25f)
+                {
+                    var temp = template.Resize(scale, Emgu.CV.CvEnum.Inter.Cubic);
+                    Mat imgout = new Mat();
+                    CvInvoke.MatchTemplate(imgScene, temp, imgout, Emgu.CV.CvEnum.TemplateMatchingType.Sqdiff);
+
+                    double minval = 0;
+                    double maxval = 0;
+                    Point minloc = new Point();
+                    Point maxloc = new Point();
+
+                    CvInvoke.MinMaxLoc(imgout, ref minval, ref maxval, ref minloc, ref maxloc);
+
+                    double prob = minval / (imgout.ToImage<Gray, byte>().GetSum().Intensity);
+
+                    if(prob<GlobalminVal)
+                    {
+                        GlobalminVal = prob;
+                        r = new Rectangle(minloc, temp.Size);
+                    }
+                }
+
+                if (r!=null)
+                {
+                    CvInvoke.Rectangle(imgScene, r, new MCvScalar(255, 0, 0), 3);
+                    pictureBox1.Image = imgScene.AsBitmap();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void featureMatchingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private static VectorOfPoint ProcessImage(Image<Gray,byte> template, Image<Gray, byte> sceneImage)
+        {
+            try
+            {
+                // initialization
+                VectorOfPoint finalPoints = null;
+                Mat homography = null;
+                VectorOfKeyPoint templateKeyPoints = new VectorOfKeyPoint();
+                VectorOfKeyPoint sceneKeyPoints = new VectorOfKeyPoint();
+                Mat tempalteDescriptor = new Mat();
+                Mat sceneDescriptor = new Mat();
+
+                Mat mask;
+                int k = 2;
+                double uniquenessthreshold = 0.80;
+                VectorOfVectorOfDMatch matches = new VectorOfVectorOfDMatch();
+
+                // feature detectino and description
+                Brisk featureDetector = new Brisk();
+                featureDetector.DetectAndCompute(template, null, templateKeyPoints, tempalteDescriptor, false);
+                featureDetector.DetectAndCompute(sceneImage, null, sceneKeyPoints, sceneDescriptor, false);
+
+                // Matching
+                BFMatcher matcher = new BFMatcher(DistanceType.Hamming);
+                matcher.Add(tempalteDescriptor);
+                matcher.KnnMatch(sceneDescriptor, matches, k);
+
+                mask = new Mat(matches.Size, 1, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
+                mask.SetTo(new MCvScalar(255));
+
+                Features2DToolbox.VoteForUniqueness(matches, uniquenessthreshold, mask);
+
+               int count =  Features2DToolbox.VoteForSizeAndOrientation(templateKeyPoints, sceneKeyPoints, matches, mask, 1.5, 20);
+
+                if(count>=4)
+                {
+                    homography = Features2DToolbox.GetHomographyMatrixFromMatchedFeatures(templateKeyPoints,
+                        sceneKeyPoints, matches, mask, 5);
+                }
+
+                if (homography!=null)
+                {
+                    Rectangle rect = new Rectangle(Point.Empty, template.Size);
+                    PointF[] pts = new PointF[]
+                    {
+                        new PointF(rect.Left,rect.Bottom),
+                        new PointF(rect.Right,rect.Bottom),
+                        new PointF(rect.Right,rect.Top),
+                        new PointF(rect.Left,rect.Top)
+                    };
+
+                    pts = CvInvoke.PerspectiveTransform(pts, homography);
+                    Point[] points = Array.ConvertAll<PointF, Point>(pts, Point.Round);
+                    finalPoints = new VectorOfPoint(points);
+                }
+
+                return finalPoints;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
+
+        private void bFMatcherToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null || !imgList.ContainsKey("Input"))
+                {
+                    return;
+                }
+
+                var imgScene = imgList["Input"].Clone();
+                var template = new Bitmap(pictureBox1.Image)
+                    .ToImage<Gray, byte>();
+
+                var vp = ProcessImage(template, imgScene.Convert<Gray, byte>());
+                if (vp != null)
+                {
+                    CvInvoke.Polylines(imgScene, vp, true, new MCvScalar(0, 0, 255), 5);
+                }
+
+                pictureBox1.Image = imgScene.AsBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void fLANNMatcherToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null || !imgList.ContainsKey("Input"))
+                {
+                    return;
+                }
+
+                var imgScene = imgList["Input"].Clone();
+                var template = new Bitmap(pictureBox1.Image)
+                    .ToImage<Gray, byte>();
+
+                var vp = ProcessImageFLANN(template, imgScene.Convert<Gray, byte>());
+                if (vp != null)
+                {
+                    CvInvoke.Polylines(imgScene, vp, true, new MCvScalar(0, 0, 255), 5);
+                }
+
+                pictureBox1.Image = imgScene.AsBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private static VectorOfPoint ProcessImageFLANN(Image<Gray, byte> template, Image<Gray, byte> sceneImage)
+        {
+            try
+            {
+                // initialization
+                VectorOfPoint finalPoints = null;
+                Mat homography = null;
+                VectorOfKeyPoint templateKeyPoints = new VectorOfKeyPoint();
+                VectorOfKeyPoint sceneKeyPoints = new VectorOfKeyPoint();
+                Mat tempalteDescriptor = new Mat();
+                Mat sceneDescriptor = new Mat();
+
+                Mat mask;
+                int k = 2;
+                double uniquenessthreshold = 0.80;
+                VectorOfVectorOfDMatch matches = new VectorOfVectorOfDMatch();
+
+                // feature detectino and description
+                KAZE featureDetector = new KAZE();
+                featureDetector.DetectAndCompute(template, null, templateKeyPoints, tempalteDescriptor, false);
+                featureDetector.DetectAndCompute(sceneImage, null, sceneKeyPoints, sceneDescriptor, false);
+
+
+                // Matching
+
+                //KdTreeIndexParams ip = new KdTreeIndexParams();
+                //var ip = new AutotunedIndexParams();
+                var ip = new LinearIndexParams();
+                SearchParams sp = new SearchParams();
+                FlannBasedMatcher matcher = new FlannBasedMatcher(ip, sp);
+
+
+                matcher.Add(tempalteDescriptor);
+                matcher.KnnMatch(sceneDescriptor, matches, k);
+
+                mask = new Mat(matches.Size, 1, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
+                mask.SetTo(new MCvScalar(255));
+
+                Features2DToolbox.VoteForUniqueness(matches, uniquenessthreshold, mask);
+
+                int count = Features2DToolbox.VoteForSizeAndOrientation(templateKeyPoints, sceneKeyPoints, matches, mask, 1.5, 20);
+
+                if (count >= 4)
+                {
+                    homography = Features2DToolbox.GetHomographyMatrixFromMatchedFeatures(templateKeyPoints,
+                        sceneKeyPoints, matches, mask, 5);
+                }
+
+                if (homography != null)
+                {
+                    Rectangle rect = new Rectangle(Point.Empty, template.Size);
+                    PointF[] pts = new PointF[]
+                    {
+                        new PointF(rect.Left,rect.Bottom),
+                        new PointF(rect.Right,rect.Bottom),
+                        new PointF(rect.Right,rect.Top),
+                        new PointF(rect.Left,rect.Top)
+                    };
+
+                    pts = CvInvoke.PerspectiveTransform(pts, homography);
+                    Point[] points = Array.ConvertAll<PointF, Point>(pts, Point.Round);
+                    finalPoints = new VectorOfPoint(points);
+                }
+
+                return finalPoints;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
+
+        private void harrisDetectorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ApplyHarisCorner();
+                formHarisParameters parameters = new formHarisParameters(0, 255, 200);
+                parameters.OnApply += ApplyHarisCorner;
+                parameters.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void ApplyHarisCorner(int threshold =200)
+        {
+            try
+            {
+                if (imgList["Input"] == null)
+                {
+                    return;
+                }
+
+                var img = imgList["Input"].Clone();
+                var gray = img.Convert<Gray, byte>();
+
+                var corners = new Mat();
+                CvInvoke.CornerHarris(gray, corners, 2);
+                CvInvoke.Normalize(corners, corners, 255, 0, Emgu.CV.CvEnum.NormType.MinMax);
+
+                Matrix<float> matrix = new Matrix<float>(corners.Rows, corners.Cols);
+                corners.CopyTo(matrix);
+
+                for (int i = 0; i < matrix.Rows; i++)
+                {
+                    for (int j = 0; j < matrix.Cols; j++)
+                    {
+                        if (matrix[i, j] > threshold)
+                        {
+                            CvInvoke.Circle(img, new Point(j, i), 5, new MCvScalar(0, 0, 255), 3);
+                        }
+                    }
+                }
+
+                pictureBox1.Image = img.AsBitmap();
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        private void shiTomasiToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (imgList["Input"] == null)
+                {
+                    return;
+                }
+
+                var img = imgList["Input"].Clone();
+                var gray = img.Convert<Gray, byte>();
+
+                GFTTDetector detector = new GFTTDetector(2000,0.06);
+                var corners = detector.Detect(gray);
+
+                Mat outimg = new Mat();
+                Features2DToolbox.DrawKeypoints(img, new VectorOfKeyPoint(corners), outimg, new Bgr(0, 0, 255));
+
+                pictureBox1.Image = outimg.ToBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void fASTDetectorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ApplyFASTFeatureDetector();
+                formHarisParameters parameters = new formHarisParameters(0, 15, 10);
+                parameters.OnApply += ApplyFASTFeatureDetector;
+                parameters.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        private void ApplyFASTFeatureDetector(int threshold=10)
+        {
+            try
+            {
+                if(imgList["Input"]==null)
+                {
+                    return;
+                }
+
+                var img = imgList["Input"].Clone();
+                var gray = img.Convert<Gray, byte>();
+
+                FastFeatureDetector detector = new FastFeatureDetector(threshold);
+                var corners = detector.Detect(gray);
+
+                Mat outimg = new Mat();
+                Features2DToolbox.DrawKeypoints(img, new VectorOfKeyPoint(corners), outimg, new Bgr(0, 0, 255));
+
+                pictureBox1.Image = outimg.ToBitmap();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void oRBDetectorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (imgList["Input"] == null)
+                {
+                    return;
+                }
+
+                var img = imgList["Input"].Clone();
+                var gray = img.Convert<Gray, byte>();
+
+                ORBDetector detector = new ORBDetector();
+                var corners = detector.Detect(gray);
+
+                Mat outimg = new Mat();
+                Features2DToolbox.DrawKeypoints(img, new VectorOfKeyPoint(corners), outimg, new Bgr(0, 0, 255));
+
+                pictureBox1.Image = outimg.ToBitmap();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void mSERDetectorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (imgList["Input"] == null)
+                {
+                    return;
+                }
+
+                var img = imgList["Input"].Clone();
+                var gray = img.Convert<Gray, byte>();
+
+                MSERDetector detector = new MSERDetector();
+                var corners = detector.Detect(gray);
+
+                Mat outimg = new Mat();
+                Features2DToolbox.DrawKeypoints(img, new VectorOfKeyPoint(corners), outimg, new Bgr(0, 0, 255));
+
+                pictureBox1.Image = outimg.ToBitmap();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
