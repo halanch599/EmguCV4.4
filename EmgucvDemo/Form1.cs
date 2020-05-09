@@ -727,6 +727,116 @@ namespace EmgucvDemo
             }
         }
 
+        private void findContoursSortToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null) return;
+
+                var img = new Bitmap(pictureBox1.Image).ToImage<Bgr, byte>();
+
+                var gray = img.Convert<Gray, byte>()
+                    .ThresholdBinaryInv(new Gray(240), new Gray(255));
+
+                // contours
+                VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
+                Mat h = new Mat();
+
+                CvInvoke.FindContours(gray, contours, h, Emgu.CV.CvEnum.RetrType.External
+                    , Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+
+
+                VectorOfPoint approx = new VectorOfPoint();
+
+                Dictionary<int, double> shapes = new Dictionary<int, double>();
+
+                for (int i = 0; i < contours.Size; i++)
+                {
+                    approx.Clear();
+                    double perimeter = CvInvoke.ArcLength(contours[i], true);
+                    CvInvoke.ApproxPolyDP(contours[i], approx, 0.04 * perimeter, true);
+                    double area = CvInvoke.ContourArea(contours[i]);
+
+                    if(approx.Size>6)
+                    {
+                        shapes.Add(i, area);
+                    }
+                }
+
+
+                if (shapes.Count>0)
+                {
+                    var sortedShapes = (from item in shapes
+                                        orderby item.Value ascending
+                                        select item).ToList();
+
+                    for (int i = 0; i < sortedShapes.Count; i++)
+                    {
+                        CvInvoke.DrawContours(img, contours, sortedShapes[i].Key, new MCvScalar(0, 0, 255), 2);
+                        var moments = CvInvoke.Moments(contours[sortedShapes[i].Key]);
+                        int x = (int)(moments.M10 / moments.M00);
+                        int y = (int)(moments.M01 / moments.M00);
+
+                        CvInvoke.PutText(img, (i + 1).ToString(), new Point(x, y), Emgu.CV.CvEnum.FontFace.HersheyTriplex, 1.0,
+                            new MCvScalar(0, 0, 255), 2);
+                        CvInvoke.PutText(img, sortedShapes[i].Value.ToString(), new Point(x, y-30), Emgu.CV.CvEnum.FontFace.HersheyTriplex, 1.0,
+                            new MCvScalar(0, 0, 255), 2);
+                    }
+
+                }
+
+                pictureBox1.Image = img.ToBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void greenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null) return;
+
+                var img = new Bitmap(pictureBox1.Image).ToImage<Bgr, byte>();
+                img._SmoothGaussian(5);
+
+                Bgr lower = new Bgr(0, 100, 0);
+                Bgr higher = new Bgr(100, 255, 50);
+
+                var mask = img.InRange(lower, higher).Not();
+                img.SetValue(new Bgr(0, 0, 0), mask);
+                pictureBox1.Image = img.AsBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void redToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null) return;
+
+                var img = new Bitmap(pictureBox1.Image).ToImage<Bgr, byte>();
+                img._SmoothGaussian(5);
+
+                Bgr lower = new Bgr(0, 0, 150);
+                Bgr higher = new Bgr(50, 50, 255);
+
+                var mask = img.InRange(lower, higher).Not();
+                img.SetValue(new Bgr(0, 0, 0), mask);
+                pictureBox1.Image = img.AsBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
 
