@@ -483,7 +483,7 @@ namespace EmgucvDemo
         {
             try
             {
-                // initialization
+                // initializations done
                 VectorOfPoint finalPoints = null;
                 Mat homography = null;
                 VectorOfKeyPoint templateKeyPoints = new VectorOfKeyPoint();
