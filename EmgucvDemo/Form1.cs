@@ -837,6 +837,59 @@ namespace EmgucvDemo
             }
         }
 
+        private void multiToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null) return;
+                if (rect == null) return;
+
+                ApplyMultiObjectDetectionTM();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void ApplyMultiObjectDetectionTM(float threshold = 0.1f)
+        {
+            try
+            {
+                var imgScene = imgList["Input"].Clone();
+                var template = new Bitmap(pictureBox1.Image).ToImage<Bgr, byte>();
+
+                Mat imgOut = new Mat();
+                CvInvoke.MatchTemplate(imgScene, template, imgOut, Emgu.CV.CvEnum.TemplateMatchingType.Sqdiff);
+
+                Mat imgOutNorm = new Mat();
+                CvInvoke.Normalize(imgOut, imgOutNorm, 0, 1, Emgu.CV.CvEnum.NormType.MinMax, Emgu.CV.CvEnum.DepthType.Cv64F);
+
+                Matrix<double> matches = new Matrix<double>(imgOutNorm.Size);
+                imgOutNorm.CopyTo(matches);
+
+                double minValue = 0, maxVal = 0;
+                Point minLoc = new Point();
+                Point maxLoc = new Point();
+
+                do
+                {
+                    CvInvoke.MinMaxLoc(matches, ref minValue, ref maxVal, ref minLoc, ref maxLoc);
+                    Rectangle r = new Rectangle(minLoc, template.Size);
+                    CvInvoke.Rectangle(imgScene, r, new MCvScalar(255, 0, 0), 1);
+
+                    matches[minLoc.Y, minLoc.X] = 0.5;
+                    matches[maxLoc.Y, maxLoc.X] = 0.5;
+                } while (minValue <= threshold);
+
+                pictureBox1.Image = imgScene.AsBitmap();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
 
