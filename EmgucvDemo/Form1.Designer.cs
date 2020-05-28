@@ -40,6 +40,7 @@
             this.templateMatchingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.matchingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.multiScaleTemplateMatchingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.multiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.featureMatchingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bFMatcherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fLANNMatcherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,7 +66,7 @@
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.panel3 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.multiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.filledObjectDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -128,28 +129,28 @@
             // selectROIToolStripMenuItem
             // 
             this.selectROIToolStripMenuItem.Name = "selectROIToolStripMenuItem";
-            this.selectROIToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.selectROIToolStripMenuItem.Size = new System.Drawing.Size(212, 26);
             this.selectROIToolStripMenuItem.Text = "Select ROI";
             this.selectROIToolStripMenuItem.Click += new System.EventHandler(this.selectROIToolStripMenuItem_Click);
             // 
             // getRegionOfROIToolStripMenuItem
             // 
             this.getRegionOfROIToolStripMenuItem.Name = "getRegionOfROIToolStripMenuItem";
-            this.getRegionOfROIToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.getRegionOfROIToolStripMenuItem.Size = new System.Drawing.Size(212, 26);
             this.getRegionOfROIToolStripMenuItem.Text = "Get Region of ROI";
             this.getRegionOfROIToolStripMenuItem.Click += new System.EventHandler(this.getRegionOfROIToolStripMenuItem_Click);
             // 
             // gaussianBlurROIToolStripMenuItem
             // 
             this.gaussianBlurROIToolStripMenuItem.Name = "gaussianBlurROIToolStripMenuItem";
-            this.gaussianBlurROIToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.gaussianBlurROIToolStripMenuItem.Size = new System.Drawing.Size(212, 26);
             this.gaussianBlurROIToolStripMenuItem.Text = "Gaussian Blur ROI";
             this.gaussianBlurROIToolStripMenuItem.Click += new System.EventHandler(this.gaussianBlurROIToolStripMenuItem_Click);
             // 
             // cannyEdgesROIToolStripMenuItem
             // 
             this.cannyEdgesROIToolStripMenuItem.Name = "cannyEdgesROIToolStripMenuItem";
-            this.cannyEdgesROIToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.cannyEdgesROIToolStripMenuItem.Size = new System.Drawing.Size(212, 26);
             this.cannyEdgesROIToolStripMenuItem.Text = "Canny Edges ROI";
             this.cannyEdgesROIToolStripMenuItem.Click += new System.EventHandler(this.cannyEdgesROIToolStripMenuItem_Click);
             // 
@@ -176,6 +177,13 @@
             this.multiScaleTemplateMatchingToolStripMenuItem.Size = new System.Drawing.Size(299, 26);
             this.multiScaleTemplateMatchingToolStripMenuItem.Text = "Multi-Scale Template Matching";
             this.multiScaleTemplateMatchingToolStripMenuItem.Click += new System.EventHandler(this.multiScaleTemplateMatchingToolStripMenuItem_Click);
+            // 
+            // multiToolStripMenuItem
+            // 
+            this.multiToolStripMenuItem.Name = "multiToolStripMenuItem";
+            this.multiToolStripMenuItem.Size = new System.Drawing.Size(299, 26);
+            this.multiToolStripMenuItem.Text = "Multi Object Detection";
+            this.multiToolStripMenuItem.Click += new System.EventHandler(this.multiToolStripMenuItem_Click);
             // 
             // featureMatchingToolStripMenuItem
             // 
@@ -262,7 +270,7 @@
             this.resizeToolStripMenuItem,
             this.rotationToolStripMenuItem});
             this.transformationsToolStripMenuItem.Name = "transformationsToolStripMenuItem";
-            this.transformationsToolStripMenuItem.Size = new System.Drawing.Size(198, 26);
+            this.transformationsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.transformationsToolStripMenuItem.Text = "Transformations";
             // 
             // resizeToolStripMenuItem
@@ -298,7 +306,8 @@
             // objectDetectionToolStripMenuItem
             // 
             this.objectDetectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.colorBasedToolStripMenuItem});
+            this.colorBasedToolStripMenuItem,
+            this.filledObjectDetectionToolStripMenuItem});
             this.objectDetectionToolStripMenuItem.Name = "objectDetectionToolStripMenuItem";
             this.objectDetectionToolStripMenuItem.Size = new System.Drawing.Size(230, 26);
             this.objectDetectionToolStripMenuItem.Text = "Object Detection";
@@ -309,20 +318,21 @@
             this.greenToolStripMenuItem,
             this.redToolStripMenuItem});
             this.colorBasedToolStripMenuItem.Name = "colorBasedToolStripMenuItem";
-            this.colorBasedToolStripMenuItem.Size = new System.Drawing.Size(174, 26);
+            this.colorBasedToolStripMenuItem.Size = new System.Drawing.Size(245, 26);
             this.colorBasedToolStripMenuItem.Text = "Color-Based";
+            this.colorBasedToolStripMenuItem.Click += new System.EventHandler(this.colorBasedToolStripMenuItem_Click);
             // 
             // greenToolStripMenuItem
             // 
             this.greenToolStripMenuItem.Name = "greenToolStripMenuItem";
-            this.greenToolStripMenuItem.Size = new System.Drawing.Size(131, 26);
+            this.greenToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.greenToolStripMenuItem.Text = "Green";
             this.greenToolStripMenuItem.Click += new System.EventHandler(this.greenToolStripMenuItem_Click);
             // 
             // redToolStripMenuItem
             // 
             this.redToolStripMenuItem.Name = "redToolStripMenuItem";
-            this.redToolStripMenuItem.Size = new System.Drawing.Size(131, 26);
+            this.redToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.redToolStripMenuItem.Text = "Red";
             this.redToolStripMenuItem.Click += new System.EventHandler(this.redToolStripMenuItem_Click);
             // 
@@ -390,12 +400,12 @@
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
             // 
-            // multiToolStripMenuItem
+            // filledObjectDetectionToolStripMenuItem
             // 
-            this.multiToolStripMenuItem.Name = "multiToolStripMenuItem";
-            this.multiToolStripMenuItem.Size = new System.Drawing.Size(299, 26);
-            this.multiToolStripMenuItem.Text = "Multi Object Detection";
-            this.multiToolStripMenuItem.Click += new System.EventHandler(this.multiToolStripMenuItem_Click);
+            this.filledObjectDetectionToolStripMenuItem.Name = "filledObjectDetectionToolStripMenuItem";
+            this.filledObjectDetectionToolStripMenuItem.Size = new System.Drawing.Size(245, 26);
+            this.filledObjectDetectionToolStripMenuItem.Text = "Filled Object Detection";
+            this.filledObjectDetectionToolStripMenuItem.Click += new System.EventHandler(this.filledObjectDetectionToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -461,6 +471,7 @@
         private System.Windows.Forms.ToolStripMenuItem greenToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem redToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem multiToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem filledObjectDetectionToolStripMenuItem;
     }
 }
 

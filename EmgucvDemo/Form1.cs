@@ -863,6 +863,7 @@ namespace EmgucvDemo
                 CvInvoke.MatchTemplate(imgScene, template, imgOut, Emgu.CV.CvEnum.TemplateMatchingType.Sqdiff);
 
                 Mat imgOutNorm = new Mat();
+        
                 CvInvoke.Normalize(imgOut, imgOutNorm, 0, 1, Emgu.CV.CvEnum.NormType.MinMax, Emgu.CV.CvEnum.DepthType.Cv64F);
 
                 Matrix<double> matches = new Matrix<double>(imgOutNorm.Size);
@@ -887,6 +888,56 @@ namespace EmgucvDemo
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+
+        private void colorBasedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void filledObjectDetectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null) return;
+                var img = new Bitmap(pictureBox1.Image).ToImage<Bgr, byte>();
+                var gray = img.Convert<Gray, byte>()
+                    .SmoothGaussian(5)
+                    .ThresholdBinaryInv(new Gray(250), new Gray(255));
+
+                VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
+                Mat h = new Mat();
+
+                CvInvoke.FindContours(gray, contours, h, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+                var mask = gray.CopyBlank();
+                for (int i = 0; i < contours.Size; i++)
+                {
+                    var area = CvInvoke.ContourArea(contours[i]);
+                    if (area>100)
+                    {
+                        var bbox = CvInvoke.BoundingRectangle(contours[i]);
+                        gray.ROI = bbox;
+                        mask.ROI = bbox;
+                        var count = gray.GetSum().Intensity / 255;
+                        //var count2 = gray.CountNonzero();
+                        float percentage = (float)count / (bbox.Width*bbox.Height);
+
+                        if(percentage<0.5f)
+                        {
+                            gray.CopyTo(mask);
+                        }
+                        gray.ROI = Rectangle.Empty;
+                        mask.ROI = Rectangle.Empty;
+                    }
+                }
+                img.SetValue(new Bgr(255, 255, 255), mask);
+                AddImage(img, "Filtered Image");
+                pictureBox1.Image = img.AsBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
