@@ -941,6 +941,106 @@ namespace EmgucvDemo
             }
         }
 
+        private void detectObjectsWithHolesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int threshold = 10;
+                if (pictureBox1.Image == null) return;
+
+                var img = new Bitmap(pictureBox1.Image).ToImage<Gray, byte>()
+                    .SmoothGaussian(3);
+                var gray = img.ThresholdBinaryInv(new Gray(200), new Gray(255));
+
+                VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
+                Mat mat = new Mat();
+                CvInvoke.FindContours(gray, contours, mat, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+
+                var mask = gray.CopyBlank();
+
+                for (int i = 0; i < contours.Size; i++)
+                {
+                    var area = CvInvoke.ContourArea(contours[i]);
+                    if (area>50)
+                    {
+                        var bbox = CvInvoke.BoundingRectangle(contours[i]);
+                        CvInvoke.DrawContours(mask, contours, i, new MCvScalar(255), -1);
+
+                        gray.ROI = bbox;
+                        mask.ROI = bbox;
+
+                        var grayNonZero = gray.CountNonzero();
+                        var maskNonZero = mask.CountNonzero();
+
+                        gray.ROI = Rectangle.Empty;
+                        mask.ROI = Rectangle.Empty;
+                        
+
+                        int diff = Math.Abs(grayNonZero[0] - maskNonZero[0]);
+                        
+
+                        if (diff<=threshold)
+                        {
+                            mask._Dilate(2);
+                            img.SetValue(new Gray(255), mask);
+                        }
+
+                        mask.SetZero();
+                    }
+                }
+                AddImage(img.Convert<Bgr, byte>(), "Objects with Holes");
+                pictureBox1.Image = img.ToBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void countHolesİnObjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null) return;
+
+                var img = new Bitmap(pictureBox1.Image).ToImage<Gray, byte>()
+                    .SmoothGaussian(3);
+                var gray = img.ThresholdBinaryInv(new Gray(200), new Gray(255));
+
+                VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
+                Mat mat = new Mat();
+                CvInvoke.FindContours(gray, contours, mat, Emgu.CV.CvEnum.RetrType.Tree, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+                int[] hierarchy = mat.GetData(false).Cast<int>().ToArray();
+                var mask = img.CopyBlank();
+
+                for (int i = 0; i < contours.Size; i++)
+                {
+                    var area = CvInvoke.ContourArea(contours[i]);
+                    if (area>50)
+                    {
+                        var Parent = hierarchy[(i * 4) + 3];
+
+                        if (Parent==-1)
+                        {
+                            // count the contours inside
+                            var count = hierarchy.Where((p, j) => ((j + 1) % 4 == 0) && p == i).Count();
+                            var bbox = CvInvoke.BoundingRectangle(contours[i]);
+                            bbox.Y -= 5;
+                            CvInvoke.PutText(img, "Holes = " + count.ToString(), bbox.Location,
+                                Emgu.CV.CvEnum.FontFace.HersheyPlain, 1.0, new MCvScalar(0));
+                        }
+                    }
+                }
+
+                AddImage(img.Convert<Bgr, byte>(), "Holes Object");
+                pictureBox1.Image = img.ToBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
 

@@ -60,13 +60,15 @@
             this.colorBasedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.greenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.filledObjectDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.panel3 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.filledObjectDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.detectObjectsWithHolesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.countHolesİnObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -307,7 +309,9 @@
             // 
             this.objectDetectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.colorBasedToolStripMenuItem,
-            this.filledObjectDetectionToolStripMenuItem});
+            this.filledObjectDetectionToolStripMenuItem,
+            this.detectObjectsWithHolesToolStripMenuItem,
+            this.countHolesİnObjectToolStripMenuItem});
             this.objectDetectionToolStripMenuItem.Name = "objectDetectionToolStripMenuItem";
             this.objectDetectionToolStripMenuItem.Size = new System.Drawing.Size(230, 26);
             this.objectDetectionToolStripMenuItem.Text = "Object Detection";
@@ -318,23 +322,30 @@
             this.greenToolStripMenuItem,
             this.redToolStripMenuItem});
             this.colorBasedToolStripMenuItem.Name = "colorBasedToolStripMenuItem";
-            this.colorBasedToolStripMenuItem.Size = new System.Drawing.Size(245, 26);
+            this.colorBasedToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
             this.colorBasedToolStripMenuItem.Text = "Color-Based";
             this.colorBasedToolStripMenuItem.Click += new System.EventHandler(this.colorBasedToolStripMenuItem_Click);
             // 
             // greenToolStripMenuItem
             // 
             this.greenToolStripMenuItem.Name = "greenToolStripMenuItem";
-            this.greenToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.greenToolStripMenuItem.Size = new System.Drawing.Size(131, 26);
             this.greenToolStripMenuItem.Text = "Green";
             this.greenToolStripMenuItem.Click += new System.EventHandler(this.greenToolStripMenuItem_Click);
             // 
             // redToolStripMenuItem
             // 
             this.redToolStripMenuItem.Name = "redToolStripMenuItem";
-            this.redToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.redToolStripMenuItem.Size = new System.Drawing.Size(131, 26);
             this.redToolStripMenuItem.Text = "Red";
             this.redToolStripMenuItem.Click += new System.EventHandler(this.redToolStripMenuItem_Click);
+            // 
+            // filledObjectDetectionToolStripMenuItem
+            // 
+            this.filledObjectDetectionToolStripMenuItem.Name = "filledObjectDetectionToolStripMenuItem";
+            this.filledObjectDetectionToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
+            this.filledObjectDetectionToolStripMenuItem.Text = "Filled Object Detection";
+            this.filledObjectDetectionToolStripMenuItem.Click += new System.EventHandler(this.filledObjectDetectionToolStripMenuItem_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -400,12 +411,19 @@
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
             // 
-            // filledObjectDetectionToolStripMenuItem
+            // detectObjectsWithHolesToolStripMenuItem
             // 
-            this.filledObjectDetectionToolStripMenuItem.Name = "filledObjectDetectionToolStripMenuItem";
-            this.filledObjectDetectionToolStripMenuItem.Size = new System.Drawing.Size(245, 26);
-            this.filledObjectDetectionToolStripMenuItem.Text = "Filled Object Detection";
-            this.filledObjectDetectionToolStripMenuItem.Click += new System.EventHandler(this.filledObjectDetectionToolStripMenuItem_Click);
+            this.detectObjectsWithHolesToolStripMenuItem.Name = "detectObjectsWithHolesToolStripMenuItem";
+            this.detectObjectsWithHolesToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
+            this.detectObjectsWithHolesToolStripMenuItem.Text = "Detect Objects with Holes";
+            this.detectObjectsWithHolesToolStripMenuItem.Click += new System.EventHandler(this.detectObjectsWithHolesToolStripMenuItem_Click);
+            // 
+            // countHolesİnObjectToolStripMenuItem
+            // 
+            this.countHolesİnObjectToolStripMenuItem.Name = "countHolesİnObjectToolStripMenuItem";
+            this.countHolesİnObjectToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
+            this.countHolesİnObjectToolStripMenuItem.Text = "Count Holes in Object";
+            this.countHolesİnObjectToolStripMenuItem.Click += new System.EventHandler(this.countHolesİnObjectToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -472,6 +490,8 @@
         private System.Windows.Forms.ToolStripMenuItem redToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem multiToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem filledObjectDetectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem detectObjectsWithHolesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem countHolesİnObjectToolStripMenuItem;
     }
 }
 
