@@ -14,6 +14,7 @@ using Emgu.CV.Util;
 using Emgu.CV.Flann;
 using Emgu.CV.Cuda;
 using System.Runtime.InteropServices;
+using Emgu.CV.UI;
 
 namespace EmgucvDemo
 {
@@ -1033,7 +1034,211 @@ namespace EmgucvDemo
                 }
 
                 AddImage(img.Convert<Bgr, byte>(), "Holes Object");
-                pictureBox1.Image = img.ToBitmap();
+                pictureBox1.Image = img.AsBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void calculateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void calculateToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image==null)
+                {
+                    return;
+                }
+
+                var img = new Bitmap(pictureBox1.Image)
+                    .ToImage<Gray,byte>();
+
+                Mat hist = new Mat();
+                float[] ranges = new float[] { 0, 255 };
+                int[] channel = { 0 };
+                int[] histSize = { 256 };
+
+                VectorOfMat ms = new VectorOfMat();
+                ms.Push(img);
+
+                CvInvoke.CalcHist(ms, channel, null, hist, histSize, ranges, false);
+
+                HistogramViewer viewer = new HistogramViewer();
+                viewer.Text = "Image Histogram";
+                viewer.ShowIcon = false;
+                viewer.HistogramCtrl.AddHistogram("Image Histogram", Color.Blue, hist,
+                    histSize[0], ranges);
+                viewer.HistogramCtrl.Refresh();
+                viewer.Show();
+
+                // sroting the histogram 
+                var array = hist.GetData();
+                var list = array.Cast<Single>().Select(c => (int)c).ToArray();
+                var dictionary = list.Select((v, j) => new { Key = j, Value = v })
+                    .ToDictionary(o => o.Key, o => o.Value);
+
+                var sorted = dictionary.OrderByDescending(x => x.Value).ToList();
+                int N = 20;
+                List<int> selected = new List<int>();
+                for (int i = 0; i < N; i++)
+                {
+                    selected.Add(sorted[i].Key);
+                }
+
+                Image<Gray, byte> img2 = img.Convert<byte>(delegate (byte b)
+                {
+                    return selected.Contains((int)b) ? b : (byte)0;
+                });
+
+                pictureBox1.Image = img2.AsBitmap();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void binarizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                formHarisParameters form = new formHarisParameters(0, 255, 100);
+                form.OnApply += ApplyThreshold;
+                form.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void ApplyThreshold(int x)
+        {
+            try
+            {
+                if (imgList["Input"]==null)
+                {
+                    return;
+                }
+
+                var img = imgList["Input"].Convert<Gray, byte>().Clone();
+                var output = img.ThresholdBinary(new Gray(x), new Gray(255));
+                pictureBox1.Image = output.AsBitmap();
+                AddImage(output.Convert<Bgr, byte>(), "Thresholding");
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+        }
+
+        private void histogramEqualizationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image==null)
+                {
+                    return;
+                }
+
+                var img = new Bitmap(pictureBox1.Image)
+                    .ToImage<Gray, byte>();
+                Mat histeq = new Mat();
+                CvInvoke.EqualizeHist(img, histeq);
+                pictureBox1.Image = histeq.ToBitmap();
+                AddImage(histeq.ToImage<Bgr, byte>(), "Histogram Equalization");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void cLAHEToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null)
+                {
+                    return;
+                }
+
+                var img = new Bitmap(pictureBox1.Image)
+                    .ToImage<Gray, byte>();
+                Mat output = new Mat();
+                CvInvoke.CLAHE(img, 50, new Size(8, 8), output);
+                pictureBox1.Image = output.ToBitmap();
+                AddImage(output.ToImage<Bgr, byte>(), "CLAHE");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void backpropagationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (imgList["Input"]==null)
+                {
+                    return;
+                }
+
+                if (rect==null)
+                {
+                    return;
+                }
+
+                var imgScene = imgList["Input"].Clone();
+                var imgObject = new Bitmap(pictureBox1.Image)
+                    .ToImage<Gray, byte>();
+                Mat histObject = new Mat();
+
+                float[] ranges = new float[] { 0, 255 };
+                int[] channel = { 0};
+                int[] histSize = { 256 };
+
+                var msScene = new VectorOfMat();
+                msScene.Push(imgScene);
+
+                var msObject = new VectorOfMat();
+                msObject.Push(imgObject);
+
+                CvInvoke.CalcHist(msObject, channel, null, histObject, histSize, ranges, false);
+                CvInvoke.Normalize(histObject, histObject, 0, 255, Emgu.CV.CvEnum.NormType.MinMax);
+
+                Mat proj = new Mat();
+                CvInvoke.CalcBackProject(msScene, channel, histObject, proj, ranges);
+
+                var kernel = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Ellipse,
+                    new Size(5, 5), new Point(-1, -1));
+
+                CvInvoke.Filter2D(proj, proj, kernel, new Point(-1, -1));
+
+                var binary = proj.ToImage<Gray, byte>().ThresholdBinary(new Gray(240), new Gray(255))
+                    .Mat;
+                var rgb = imgScene.CopyBlank();
+
+                VectorOfMat vm = new VectorOfMat();
+                vm.Push(binary);
+                vm.Push(binary);
+                vm.Push(binary);
+
+                CvInvoke.Merge(vm, rgb);
+
+                var output = new Mat();
+                CvInvoke.BitwiseAnd(rgb, imgScene, output);
+                pictureBox1.Image = output.ToBitmap();
+                AddImage(output.ToImage<Bgr, byte>(), "BackProjection");
             }
             catch (Exception ex)
             {

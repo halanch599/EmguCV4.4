@@ -61,14 +61,20 @@
             this.greenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filledObjectDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.detectObjectsWithHolesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.countHolesİnObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.panel3 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.detectObjectsWithHolesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.countHolesİnObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.histogramToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.calculateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.binarizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.histogramEqualizationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cLAHEToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backpropagationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -125,7 +131,7 @@
             this.gaussianBlurROIToolStripMenuItem,
             this.cannyEdgesROIToolStripMenuItem});
             this.processROIToolStripMenuItem.Name = "processROIToolStripMenuItem";
-            this.processROIToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.processROIToolStripMenuItem.Size = new System.Drawing.Size(220, 26);
             this.processROIToolStripMenuItem.Text = "Process ROI";
             // 
             // selectROIToolStripMenuItem
@@ -163,7 +169,7 @@
             this.multiScaleTemplateMatchingToolStripMenuItem,
             this.multiToolStripMenuItem});
             this.templateMatchingToolStripMenuItem.Name = "templateMatchingToolStripMenuItem";
-            this.templateMatchingToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.templateMatchingToolStripMenuItem.Size = new System.Drawing.Size(220, 26);
             this.templateMatchingToolStripMenuItem.Text = "Template Matching";
             // 
             // matchingToolStripMenuItem
@@ -193,7 +199,7 @@
             this.bFMatcherToolStripMenuItem,
             this.fLANNMatcherToolStripMenuItem});
             this.featureMatchingToolStripMenuItem.Name = "featureMatchingToolStripMenuItem";
-            this.featureMatchingToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.featureMatchingToolStripMenuItem.Size = new System.Drawing.Size(220, 26);
             this.featureMatchingToolStripMenuItem.Text = "Feature Matching";
             this.featureMatchingToolStripMenuItem.Click += new System.EventHandler(this.featureMatchingToolStripMenuItem_Click);
             // 
@@ -220,7 +226,7 @@
             this.oRBDetectorToolStripMenuItem,
             this.mSERDetectorToolStripMenuItem});
             this.featureDetectorToolStripMenuItem.Name = "featureDetectorToolStripMenuItem";
-            this.featureDetectorToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.featureDetectorToolStripMenuItem.Size = new System.Drawing.Size(220, 26);
             this.featureDetectorToolStripMenuItem.Text = "Feature Detector";
             // 
             // harrisDetectorToolStripMenuItem
@@ -261,7 +267,8 @@
             // utilityToolStripMenuItem
             // 
             this.utilityToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.transformationsToolStripMenuItem});
+            this.transformationsToolStripMenuItem,
+            this.binarizeToolStripMenuItem});
             this.utilityToolStripMenuItem.Name = "utilityToolStripMenuItem";
             this.utilityToolStripMenuItem.Size = new System.Drawing.Size(62, 24);
             this.utilityToolStripMenuItem.Text = "Utility";
@@ -293,7 +300,8 @@
             // 
             this.processToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.findContoursSortToolStripMenuItem,
-            this.objectDetectionToolStripMenuItem});
+            this.objectDetectionToolStripMenuItem,
+            this.histogramToolStripMenuItem});
             this.processToolStripMenuItem1.Name = "processToolStripMenuItem1";
             this.processToolStripMenuItem1.Size = new System.Drawing.Size(72, 24);
             this.processToolStripMenuItem1.Text = "Process";
@@ -346,6 +354,20 @@
             this.filledObjectDetectionToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
             this.filledObjectDetectionToolStripMenuItem.Text = "Filled Object Detection";
             this.filledObjectDetectionToolStripMenuItem.Click += new System.EventHandler(this.filledObjectDetectionToolStripMenuItem_Click);
+            // 
+            // detectObjectsWithHolesToolStripMenuItem
+            // 
+            this.detectObjectsWithHolesToolStripMenuItem.Name = "detectObjectsWithHolesToolStripMenuItem";
+            this.detectObjectsWithHolesToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
+            this.detectObjectsWithHolesToolStripMenuItem.Text = "Detect Objects with Holes";
+            this.detectObjectsWithHolesToolStripMenuItem.Click += new System.EventHandler(this.detectObjectsWithHolesToolStripMenuItem_Click);
+            // 
+            // countHolesİnObjectToolStripMenuItem
+            // 
+            this.countHolesİnObjectToolStripMenuItem.Name = "countHolesİnObjectToolStripMenuItem";
+            this.countHolesİnObjectToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
+            this.countHolesİnObjectToolStripMenuItem.Text = "Count Holes in Object";
+            this.countHolesİnObjectToolStripMenuItem.Click += new System.EventHandler(this.countHolesİnObjectToolStripMenuItem_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -411,19 +433,51 @@
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
             // 
-            // detectObjectsWithHolesToolStripMenuItem
+            // histogramToolStripMenuItem
             // 
-            this.detectObjectsWithHolesToolStripMenuItem.Name = "detectObjectsWithHolesToolStripMenuItem";
-            this.detectObjectsWithHolesToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
-            this.detectObjectsWithHolesToolStripMenuItem.Text = "Detect Objects with Holes";
-            this.detectObjectsWithHolesToolStripMenuItem.Click += new System.EventHandler(this.detectObjectsWithHolesToolStripMenuItem_Click);
+            this.histogramToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.calculateToolStripMenuItem,
+            this.histogramEqualizationToolStripMenuItem,
+            this.cLAHEToolStripMenuItem,
+            this.backpropagationToolStripMenuItem});
+            this.histogramToolStripMenuItem.Name = "histogramToolStripMenuItem";
+            this.histogramToolStripMenuItem.Size = new System.Drawing.Size(230, 26);
+            this.histogramToolStripMenuItem.Text = "Histogram";
             // 
-            // countHolesİnObjectToolStripMenuItem
+            // calculateToolStripMenuItem
             // 
-            this.countHolesİnObjectToolStripMenuItem.Name = "countHolesİnObjectToolStripMenuItem";
-            this.countHolesİnObjectToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
-            this.countHolesİnObjectToolStripMenuItem.Text = "Count Holes in Object";
-            this.countHolesİnObjectToolStripMenuItem.Click += new System.EventHandler(this.countHolesİnObjectToolStripMenuItem_Click);
+            this.calculateToolStripMenuItem.Name = "calculateToolStripMenuItem";
+            this.calculateToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.calculateToolStripMenuItem.Text = "Calculate";
+            this.calculateToolStripMenuItem.Click += new System.EventHandler(this.calculateToolStripMenuItem_Click_1);
+            // 
+            // binarizeToolStripMenuItem
+            // 
+            this.binarizeToolStripMenuItem.Name = "binarizeToolStripMenuItem";
+            this.binarizeToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.binarizeToolStripMenuItem.Text = "Binarize";
+            this.binarizeToolStripMenuItem.Click += new System.EventHandler(this.binarizeToolStripMenuItem_Click);
+            // 
+            // histogramEqualizationToolStripMenuItem
+            // 
+            this.histogramEqualizationToolStripMenuItem.Name = "histogramEqualizationToolStripMenuItem";
+            this.histogramEqualizationToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
+            this.histogramEqualizationToolStripMenuItem.Text = "Histogram Equalization";
+            this.histogramEqualizationToolStripMenuItem.Click += new System.EventHandler(this.histogramEqualizationToolStripMenuItem_Click);
+            // 
+            // cLAHEToolStripMenuItem
+            // 
+            this.cLAHEToolStripMenuItem.Name = "cLAHEToolStripMenuItem";
+            this.cLAHEToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
+            this.cLAHEToolStripMenuItem.Text = "CLAHE";
+            this.cLAHEToolStripMenuItem.Click += new System.EventHandler(this.cLAHEToolStripMenuItem_Click);
+            // 
+            // backpropagationToolStripMenuItem
+            // 
+            this.backpropagationToolStripMenuItem.Name = "backpropagationToolStripMenuItem";
+            this.backpropagationToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
+            this.backpropagationToolStripMenuItem.Text = "Backpropagation";
+            this.backpropagationToolStripMenuItem.Click += new System.EventHandler(this.backpropagationToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -492,6 +546,12 @@
         private System.Windows.Forms.ToolStripMenuItem filledObjectDetectionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem detectObjectsWithHolesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem countHolesİnObjectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem histogramToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem calculateToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem binarizeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem histogramEqualizationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem cLAHEToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem backpropagationToolStripMenuItem;
     }
 }
 
