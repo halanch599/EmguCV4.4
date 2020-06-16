@@ -54,6 +54,7 @@
             this.transformationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rotationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.binarizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.processToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.findContoursSortToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.objectDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,18 +64,19 @@
             this.filledObjectDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.detectObjectsWithHolesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.countHolesİnObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.histogramToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.calculateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.histogramEqualizationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cLAHEToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.segmentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.watershedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.panel3 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.histogramToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.calculateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.binarizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.histogramEqualizationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cLAHEToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.backpropagationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backprojectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -90,7 +92,8 @@
             this.fileToolStripMenuItem,
             this.processToolStripMenuItem,
             this.utilityToolStripMenuItem,
-            this.processToolStripMenuItem1});
+            this.processToolStripMenuItem1,
+            this.segmentationToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1055, 28);
@@ -296,6 +299,13 @@
             this.rotationToolStripMenuItem.Text = "Rotation";
             this.rotationToolStripMenuItem.Click += new System.EventHandler(this.rotationToolStripMenuItem_Click);
             // 
+            // binarizeToolStripMenuItem
+            // 
+            this.binarizeToolStripMenuItem.Name = "binarizeToolStripMenuItem";
+            this.binarizeToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.binarizeToolStripMenuItem.Text = "Binarize";
+            this.binarizeToolStripMenuItem.Click += new System.EventHandler(this.binarizeToolStripMenuItem_Click);
+            // 
             // processToolStripMenuItem1
             // 
             this.processToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -369,6 +379,53 @@
             this.countHolesİnObjectToolStripMenuItem.Text = "Count Holes in Object";
             this.countHolesİnObjectToolStripMenuItem.Click += new System.EventHandler(this.countHolesİnObjectToolStripMenuItem_Click);
             // 
+            // histogramToolStripMenuItem
+            // 
+            this.histogramToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.calculateToolStripMenuItem,
+            this.histogramEqualizationToolStripMenuItem,
+            this.cLAHEToolStripMenuItem,
+            this.backprojectionToolStripMenuItem});
+            this.histogramToolStripMenuItem.Name = "histogramToolStripMenuItem";
+            this.histogramToolStripMenuItem.Size = new System.Drawing.Size(230, 26);
+            this.histogramToolStripMenuItem.Text = "Histogram";
+            // 
+            // calculateToolStripMenuItem
+            // 
+            this.calculateToolStripMenuItem.Name = "calculateToolStripMenuItem";
+            this.calculateToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
+            this.calculateToolStripMenuItem.Text = "Calculate";
+            this.calculateToolStripMenuItem.Click += new System.EventHandler(this.calculateToolStripMenuItem_Click_1);
+            // 
+            // histogramEqualizationToolStripMenuItem
+            // 
+            this.histogramEqualizationToolStripMenuItem.Name = "histogramEqualizationToolStripMenuItem";
+            this.histogramEqualizationToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
+            this.histogramEqualizationToolStripMenuItem.Text = "Histogram Equalization";
+            this.histogramEqualizationToolStripMenuItem.Click += new System.EventHandler(this.histogramEqualizationToolStripMenuItem_Click);
+            // 
+            // cLAHEToolStripMenuItem
+            // 
+            this.cLAHEToolStripMenuItem.Name = "cLAHEToolStripMenuItem";
+            this.cLAHEToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
+            this.cLAHEToolStripMenuItem.Text = "CLAHE";
+            this.cLAHEToolStripMenuItem.Click += new System.EventHandler(this.cLAHEToolStripMenuItem_Click);
+            // 
+            // segmentationToolStripMenuItem
+            // 
+            this.segmentationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.watershedToolStripMenuItem});
+            this.segmentationToolStripMenuItem.Name = "segmentationToolStripMenuItem";
+            this.segmentationToolStripMenuItem.Size = new System.Drawing.Size(116, 24);
+            this.segmentationToolStripMenuItem.Text = "Segmentation";
+            // 
+            // watershedToolStripMenuItem
+            // 
+            this.watershedToolStripMenuItem.Name = "watershedToolStripMenuItem";
+            this.watershedToolStripMenuItem.Size = new System.Drawing.Size(162, 26);
+            this.watershedToolStripMenuItem.Text = "Watershed";
+            this.watershedToolStripMenuItem.Click += new System.EventHandler(this.watershedToolStripMenuItem_Click);
+            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
@@ -433,51 +490,12 @@
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
             // 
-            // histogramToolStripMenuItem
+            // backprojectionToolStripMenuItem
             // 
-            this.histogramToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.calculateToolStripMenuItem,
-            this.histogramEqualizationToolStripMenuItem,
-            this.cLAHEToolStripMenuItem,
-            this.backpropagationToolStripMenuItem});
-            this.histogramToolStripMenuItem.Name = "histogramToolStripMenuItem";
-            this.histogramToolStripMenuItem.Size = new System.Drawing.Size(230, 26);
-            this.histogramToolStripMenuItem.Text = "Histogram";
-            // 
-            // calculateToolStripMenuItem
-            // 
-            this.calculateToolStripMenuItem.Name = "calculateToolStripMenuItem";
-            this.calculateToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.calculateToolStripMenuItem.Text = "Calculate";
-            this.calculateToolStripMenuItem.Click += new System.EventHandler(this.calculateToolStripMenuItem_Click_1);
-            // 
-            // binarizeToolStripMenuItem
-            // 
-            this.binarizeToolStripMenuItem.Name = "binarizeToolStripMenuItem";
-            this.binarizeToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.binarizeToolStripMenuItem.Text = "Binarize";
-            this.binarizeToolStripMenuItem.Click += new System.EventHandler(this.binarizeToolStripMenuItem_Click);
-            // 
-            // histogramEqualizationToolStripMenuItem
-            // 
-            this.histogramEqualizationToolStripMenuItem.Name = "histogramEqualizationToolStripMenuItem";
-            this.histogramEqualizationToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
-            this.histogramEqualizationToolStripMenuItem.Text = "Histogram Equalization";
-            this.histogramEqualizationToolStripMenuItem.Click += new System.EventHandler(this.histogramEqualizationToolStripMenuItem_Click);
-            // 
-            // cLAHEToolStripMenuItem
-            // 
-            this.cLAHEToolStripMenuItem.Name = "cLAHEToolStripMenuItem";
-            this.cLAHEToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
-            this.cLAHEToolStripMenuItem.Text = "CLAHE";
-            this.cLAHEToolStripMenuItem.Click += new System.EventHandler(this.cLAHEToolStripMenuItem_Click);
-            // 
-            // backpropagationToolStripMenuItem
-            // 
-            this.backpropagationToolStripMenuItem.Name = "backpropagationToolStripMenuItem";
-            this.backpropagationToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
-            this.backpropagationToolStripMenuItem.Text = "Backpropagation";
-            this.backpropagationToolStripMenuItem.Click += new System.EventHandler(this.backpropagationToolStripMenuItem_Click);
+            this.backprojectionToolStripMenuItem.Name = "backprojectionToolStripMenuItem";
+            this.backprojectionToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
+            this.backprojectionToolStripMenuItem.Text = "Backprojection";
+            this.backprojectionToolStripMenuItem.Click += new System.EventHandler(this.backprojectionToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -551,7 +569,9 @@
         private System.Windows.Forms.ToolStripMenuItem binarizeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem histogramEqualizationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cLAHEToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem backpropagationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem segmentationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem watershedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem backprojectionToolStripMenuItem;
     }
 }
 

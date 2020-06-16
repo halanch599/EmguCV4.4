@@ -1186,25 +1186,60 @@ namespace EmgucvDemo
 
         private void backpropagationToolStripMenuItem_Click(object sender, EventArgs e)
         {
+           
+        }
+
+        private void watershedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
             try
             {
-                if (imgList["Input"]==null)
-                {
-                    return;
-                }
+                if (pictureBox1.Image == null) return;
 
-                if (rect==null)
+                var img = new Bitmap(pictureBox1.Image)
+                    .ToImage<Bgr, byte>();
+                var mask = img.Convert<Gray, byte>()
+                    .ThresholdBinaryInv(new Gray(150), new Gray(255));
+                Mat distanceTransofrm = new Mat();
+                CvInvoke.DistanceTransform(mask, distanceTransofrm, null, Emgu.CV.CvEnum.DistType.L2, 3);
+                CvInvoke.Normalize(distanceTransofrm, distanceTransofrm, 0, 255, Emgu.CV.CvEnum.NormType.MinMax);
+                var markers = distanceTransofrm.ToImage<Gray, byte>()
+                    .ThresholdBinary(new Gray(50), new Gray(255));
+                CvInvoke.ConnectedComponents(markers, markers);
+                var finalMarkers = markers.Convert<Gray, Int32>();
+
+                CvInvoke.Watershed(img, finalMarkers);
+
+                Image<Gray, byte> boundaries = finalMarkers.Convert<byte>(delegate (Int32 x)
                 {
-                    return;
-                }
+                    return (byte)(x==-1?255:0);
+                });
+
+                boundaries._Dilate(1);
+                img.SetValue(new Bgr(0, 255, 0), boundaries);
+                AddImage(img, "Watershed Segmentation");
+                pictureBox1.Image = img.ToBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void backprojectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null) return;
+                if (rect == null) return;
 
                 var imgScene = imgList["Input"].Clone();
                 var imgObject = new Bitmap(pictureBox1.Image)
                     .ToImage<Gray, byte>();
+
                 Mat histObject = new Mat();
 
-                float[] ranges = new float[] { 0, 255 };
-                int[] channel = { 0};
+                float[] ranges = new float[] {0,255 };
+                int[] channel = { 0 };
                 int[] histSize = { 256 };
 
                 var msScene = new VectorOfMat();
@@ -1221,11 +1256,12 @@ namespace EmgucvDemo
 
                 var kernel = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Ellipse,
                     new Size(5, 5), new Point(-1, -1));
-
                 CvInvoke.Filter2D(proj, proj, kernel, new Point(-1, -1));
 
-                var binary = proj.ToImage<Gray, byte>().ThresholdBinary(new Gray(240), new Gray(255))
+                var binary = proj.ToImage<Gray, byte>()
+                    .ThresholdBinary(new Gray(50), new Gray(255))
                     .Mat;
+
                 var rgb = imgScene.CopyBlank();
 
                 VectorOfMat vm = new VectorOfMat();
@@ -1233,12 +1269,14 @@ namespace EmgucvDemo
                 vm.Push(binary);
                 vm.Push(binary);
 
-                CvInvoke.Merge(vm, rgb);
+                CvInvoke.Merge(vm,rgb.Mat);
 
                 var output = new Mat();
                 CvInvoke.BitwiseAnd(rgb, imgScene, output);
+
                 pictureBox1.Image = output.ToBitmap();
-                AddImage(output.ToImage<Bgr, byte>(), "BackProjection");
+                AddImage(output.ToImage<Bgr, byte>(), "Back Projection");
+
             }
             catch (Exception ex)
             {
