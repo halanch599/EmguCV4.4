@@ -68,15 +68,24 @@
             this.calculateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.histogramEqualizationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cLAHEToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backprojectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.segmentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.watershedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.grabCutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.textToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deskewTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.videoProcessingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.blurFacesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.panel3 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.backprojectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ımageOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ımageInpaintToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectMaskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.applyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -93,7 +102,9 @@
             this.processToolStripMenuItem,
             this.utilityToolStripMenuItem,
             this.processToolStripMenuItem1,
-            this.segmentationToolStripMenuItem});
+            this.segmentationToolStripMenuItem,
+            this.textToolStripMenuItem,
+            this.videoProcessingToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1055, 28);
@@ -311,7 +322,9 @@
             this.processToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.findContoursSortToolStripMenuItem,
             this.objectDetectionToolStripMenuItem,
-            this.histogramToolStripMenuItem});
+            this.histogramToolStripMenuItem,
+            this.ımageOverlayToolStripMenuItem,
+            this.ımageInpaintToolStripMenuItem});
             this.processToolStripMenuItem1.Name = "processToolStripMenuItem1";
             this.processToolStripMenuItem1.Size = new System.Drawing.Size(72, 24);
             this.processToolStripMenuItem1.Text = "Process";
@@ -411,10 +424,18 @@
             this.cLAHEToolStripMenuItem.Text = "CLAHE";
             this.cLAHEToolStripMenuItem.Click += new System.EventHandler(this.cLAHEToolStripMenuItem_Click);
             // 
+            // backprojectionToolStripMenuItem
+            // 
+            this.backprojectionToolStripMenuItem.Name = "backprojectionToolStripMenuItem";
+            this.backprojectionToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
+            this.backprojectionToolStripMenuItem.Text = "Backprojection";
+            this.backprojectionToolStripMenuItem.Click += new System.EventHandler(this.backprojectionToolStripMenuItem_Click);
+            // 
             // segmentationToolStripMenuItem
             // 
             this.segmentationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.watershedToolStripMenuItem});
+            this.watershedToolStripMenuItem,
+            this.grabCutToolStripMenuItem});
             this.segmentationToolStripMenuItem.Name = "segmentationToolStripMenuItem";
             this.segmentationToolStripMenuItem.Size = new System.Drawing.Size(116, 24);
             this.segmentationToolStripMenuItem.Text = "Segmentation";
@@ -425,6 +446,43 @@
             this.watershedToolStripMenuItem.Size = new System.Drawing.Size(162, 26);
             this.watershedToolStripMenuItem.Text = "Watershed";
             this.watershedToolStripMenuItem.Click += new System.EventHandler(this.watershedToolStripMenuItem_Click);
+            // 
+            // grabCutToolStripMenuItem
+            // 
+            this.grabCutToolStripMenuItem.Name = "grabCutToolStripMenuItem";
+            this.grabCutToolStripMenuItem.Size = new System.Drawing.Size(162, 26);
+            this.grabCutToolStripMenuItem.Text = "Grab Cut";
+            this.grabCutToolStripMenuItem.Click += new System.EventHandler(this.grabCutToolStripMenuItem_Click);
+            // 
+            // textToolStripMenuItem
+            // 
+            this.textToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.deskewTextToolStripMenuItem});
+            this.textToolStripMenuItem.Name = "textToolStripMenuItem";
+            this.textToolStripMenuItem.Size = new System.Drawing.Size(50, 24);
+            this.textToolStripMenuItem.Text = "Text";
+            // 
+            // deskewTextToolStripMenuItem
+            // 
+            this.deskewTextToolStripMenuItem.Name = "deskewTextToolStripMenuItem";
+            this.deskewTextToolStripMenuItem.Size = new System.Drawing.Size(174, 26);
+            this.deskewTextToolStripMenuItem.Text = "Deskew Text";
+            this.deskewTextToolStripMenuItem.Click += new System.EventHandler(this.deskewTextToolStripMenuItem_Click);
+            // 
+            // videoProcessingToolStripMenuItem
+            // 
+            this.videoProcessingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.blurFacesToolStripMenuItem});
+            this.videoProcessingToolStripMenuItem.Name = "videoProcessingToolStripMenuItem";
+            this.videoProcessingToolStripMenuItem.Size = new System.Drawing.Size(136, 24);
+            this.videoProcessingToolStripMenuItem.Text = "Video Processing";
+            // 
+            // blurFacesToolStripMenuItem
+            // 
+            this.blurFacesToolStripMenuItem.Name = "blurFacesToolStripMenuItem";
+            this.blurFacesToolStripMenuItem.Size = new System.Drawing.Size(157, 26);
+            this.blurFacesToolStripMenuItem.Text = "Blur Faces";
+            this.blurFacesToolStripMenuItem.Click += new System.EventHandler(this.blurFacesToolStripMenuItem_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -490,12 +548,35 @@
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
             // 
-            // backprojectionToolStripMenuItem
+            // ımageOverlayToolStripMenuItem
             // 
-            this.backprojectionToolStripMenuItem.Name = "backprojectionToolStripMenuItem";
-            this.backprojectionToolStripMenuItem.Size = new System.Drawing.Size(248, 26);
-            this.backprojectionToolStripMenuItem.Text = "Backprojection";
-            this.backprojectionToolStripMenuItem.Click += new System.EventHandler(this.backprojectionToolStripMenuItem_Click);
+            this.ımageOverlayToolStripMenuItem.Name = "ımageOverlayToolStripMenuItem";
+            this.ımageOverlayToolStripMenuItem.Size = new System.Drawing.Size(230, 26);
+            this.ımageOverlayToolStripMenuItem.Text = "Image Overlay";
+            this.ımageOverlayToolStripMenuItem.Click += new System.EventHandler(this.ımageOverlayToolStripMenuItem_Click);
+            // 
+            // ımageInpaintToolStripMenuItem
+            // 
+            this.ımageInpaintToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectMaskToolStripMenuItem,
+            this.applyToolStripMenuItem});
+            this.ımageInpaintToolStripMenuItem.Name = "ımageInpaintToolStripMenuItem";
+            this.ımageInpaintToolStripMenuItem.Size = new System.Drawing.Size(230, 26);
+            this.ımageInpaintToolStripMenuItem.Text = "Image Inpaint";
+            // 
+            // selectMaskToolStripMenuItem
+            // 
+            this.selectMaskToolStripMenuItem.Name = "selectMaskToolStripMenuItem";
+            this.selectMaskToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.selectMaskToolStripMenuItem.Text = "Select Mask";
+            this.selectMaskToolStripMenuItem.Click += new System.EventHandler(this.selectMaskToolStripMenuItem_Click);
+            // 
+            // applyToolStripMenuItem
+            // 
+            this.applyToolStripMenuItem.Name = "applyToolStripMenuItem";
+            this.applyToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.applyToolStripMenuItem.Text = "Apply";
+            this.applyToolStripMenuItem.Click += new System.EventHandler(this.applyToolStripMenuItem_Click_1);
             // 
             // Form1
             // 
@@ -572,6 +653,15 @@
         private System.Windows.Forms.ToolStripMenuItem segmentationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem watershedToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem backprojectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem textToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deskewTextToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem grabCutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem videoProcessingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem blurFacesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ımageOverlayToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ımageInpaintToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem selectMaskToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem applyToolStripMenuItem;
     }
 }
 

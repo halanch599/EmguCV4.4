@@ -15,6 +15,7 @@ using Emgu.CV.Flann;
 using Emgu.CV.Cuda;
 using System.Runtime.InteropServices;
 using Emgu.CV.UI;
+using Emgu.CV.CvEnum;
 
 namespace EmgucvDemo
 {
@@ -24,6 +25,11 @@ namespace EmgucvDemo
         Rectangle rect;
         Point StartROI;
         bool Selecting, MouseDown;
+
+        List<List<Point>> InpaintPoints = null;
+        List<Point> InpaintCurrentPoints = null;
+        bool InpaintMouseDown = false;
+        bool InpaintSelection = false;
         public Form1()
         {
             InitializeComponent();
@@ -73,6 +79,13 @@ namespace EmgucvDemo
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
+
+            if (InpaintSelection==true && e.Button==MouseButtons.Left)
+            {
+                InpaintMouseDown = true;
+                InpaintCurrentPoints.Add(e.Location);
+            }
+
             if(Selecting)
             {
                 MouseDown = true;
@@ -82,6 +95,24 @@ namespace EmgucvDemo
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
+            if (pictureBox1.Image==null)
+            {
+                return;
+            }
+            if (InpaintMouseDown==true && InpaintSelection==true)
+            {
+                if (InpaintCurrentPoints.Count>0)
+                {
+                    Pen p = new Pen(Brushes.Red, 5);
+                    using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+                    {
+                        g.DrawLine(p, InpaintCurrentPoints.Last(), e.Location);
+                        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                    }
+                }
+                InpaintCurrentPoints.Add(e.Location);
+                pictureBox1.Invalidate();
+            }
             if(Selecting)
             {
                 int width = Math.Max(StartROI.X, e.X) - Math.Min(StartROI.X, e.X);
@@ -107,6 +138,13 @@ namespace EmgucvDemo
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
+            if (InpaintMouseDown==true && InpaintSelection)
+            {
+                InpaintMouseDown = false;
+                InpaintPoints.Add(InpaintCurrentPoints.ToList());
+                InpaintCurrentPoints.Clear();
+            }
+            
             if(Selecting)
             {
                 Selecting = false;
@@ -1277,6 +1315,203 @@ namespace EmgucvDemo
                 pictureBox1.Image = output.ToBitmap();
                 AddImage(output.ToImage<Bgr, byte>(), "Back Projection");
 
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void deskewTextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null) return;
+
+                var img = new Bitmap(pictureBox1.Image)
+                    .ToImage<Gray, byte>();
+                var gray = img.ThresholdBinaryInv(new Gray(200), new Gray(255))
+                    .Dilate(5);
+
+                VectorOfPoint points = new VectorOfPoint();
+                CvInvoke.FindNonZero(gray, points);
+                var minareaRect = CvInvoke.MinAreaRect(points);
+
+                var rotationMatrix = new Mat(new Size(2, 3), Emgu.CV.CvEnum.DepthType.Cv32F, 1);
+                var rotatedImage = img.CopyBlank();
+                if(minareaRect.Angle<-45)
+                {
+                    minareaRect.Angle = 90 + minareaRect.Angle;
+                }
+
+                CvInvoke.GetRotationMatrix2D(minareaRect.Center, minareaRect.Angle, 1.0, rotationMatrix);
+                CvInvoke.WarpAffine(img, rotatedImage, rotationMatrix, img.Size, Emgu.CV.CvEnum.Inter.Cubic,
+                    borderMode: Emgu.CV.CvEnum.BorderType.Replicate);
+                AddImage(rotatedImage.Convert<Bgr, byte>(), "Deskewed Image");
+                pictureBox1.Image = rotatedImage.ToBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void grabCutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null) return;
+                if (rect == null) return;
+
+
+                var img = new Bitmap(pictureBox1.Image)
+                    .ToImage<Bgr, byte>();
+                var gray = img.Convert<Gray, byte>();
+
+                var output = img.GrabCut(rect, 1);
+                var img2 = output.Convert<byte>(delegate (byte b) {
+                    return (b == 1 || b == 3) ? (byte)255:(byte)0;
+                });
+
+                VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
+                Mat m = new Mat();
+                CvInvoke.FindContours(img2, contours, m, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+                CvInvoke.DrawContours(img, contours, GetBiggestContourID(contours), new MCvScalar(0, 0, 255), 3);
+                pictureBox1.Image = img.AsBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private int GetBiggestContourID(VectorOfVectorOfPoint contours)
+        {
+            double maxArea = double.MaxValue * (-1);
+            int contourId = -1;
+            for (int i = 0; i < contours.Size; i++)
+            {
+                double area = CvInvoke.ContourArea(contours[i]);
+                if(area>maxArea)
+                {
+                    maxArea = area;
+                    contourId = i;
+                }
+            }
+            return contourId;
+        }
+
+        private void blurFacesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.Filter = "Video Files(*.mp4, *.avl)|*.mp4;*.avl|All Files(*.*)|*.*";
+                if (dialog.ShowDialog()==DialogResult.OK)
+                {
+                    UIVideoPlayer player = UIVideoPlayer.GetInstance(dialog.FileName);
+                    player.Dock = DockStyle.Fill;
+                    tableLayoutPanel1.Controls.Remove(pictureBox1);
+                    tableLayoutPanel1.Controls.Add(player, 1, 0);
+                    tableLayoutPanel1.Refresh();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void ımageOverlayToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null) return;
+                //if (rect == null) return;
+
+                OpenFileDialog dialog = new OpenFileDialog();
+                if (dialog.ShowDialog()==DialogResult.OK)
+                {
+                    //background image
+                    var img1 = new Bitmap(pictureBox1.Image)
+                        .ToImage<Bgr, byte>();
+                    //foreground image
+                    var img2 = new Image<Bgr, byte>(dialog.FileName)
+                        .Resize(0.75,Inter.Cubic);
+                    var mask = img2.Convert<Gray, byte>()
+                        .SmoothGaussian(3)
+                        .ThresholdBinaryInv(new Gray(245), new Gray(255))
+                        .Erode(1);
+
+                    rect.Width = img2.Width;
+                    rect.Height = img2.Height;
+
+                    img1.ROI = rect;
+                    img1.SetValue(new Bgr(0, 0, 0), mask);
+                    img2.SetValue(new Bgr(0, 0, 0), mask.Not());
+
+                    img1._Or(img2);
+                    img1.ROI = Rectangle.Empty;
+
+                    AddImage(img1, "Image Overlay");
+                    pictureBox1.Image = img1.ToBitmap();
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void ımageInpaintToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void applyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void selectPointsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void selectMaskToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InpaintSelection = true;
+            InpaintCurrentPoints = new List<Point>();
+            InpaintPoints = new List<List<Point>>();
+        }
+
+        private void applyToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image == null) return;
+                if (InpaintPoints.Count == 0) return;
+
+                var img = new Bitmap(pictureBox1.Image).ToImage<Bgr, byte>();
+                var mask = new Image<Gray, byte>(img.Width, img.Height);
+                foreach (var polys in InpaintPoints)
+                {
+                    mask.DrawPolyline(polys.ToArray(), false, new Gray(255), 5);
+                }
+
+                var output = img.CopyBlank();
+                CvInvoke.Inpaint(img, mask, output, 3, InpaintType.Telea);
+                AddImage(output, "Image Inpaint");
+                pictureBox1.Image = output.AsBitmap();
             }
             catch (Exception ex)
             {
