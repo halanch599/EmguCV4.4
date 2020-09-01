@@ -69,6 +69,10 @@
             this.histogramEqualizationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cLAHEToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backprojectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ımageOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ımageInpaintToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectMaskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.applyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.segmentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.watershedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.grabCutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,10 +86,9 @@
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.panel3 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.ımageOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ımageInpaintToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectMaskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.applyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.table2TextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.applyToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -293,7 +296,7 @@
             this.resizeToolStripMenuItem,
             this.rotationToolStripMenuItem});
             this.transformationsToolStripMenuItem.Name = "transformationsToolStripMenuItem";
-            this.transformationsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.transformationsToolStripMenuItem.Size = new System.Drawing.Size(198, 26);
             this.transformationsToolStripMenuItem.Text = "Transformations";
             // 
             // resizeToolStripMenuItem
@@ -313,7 +316,7 @@
             // binarizeToolStripMenuItem
             // 
             this.binarizeToolStripMenuItem.Name = "binarizeToolStripMenuItem";
-            this.binarizeToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.binarizeToolStripMenuItem.Size = new System.Drawing.Size(198, 26);
             this.binarizeToolStripMenuItem.Text = "Binarize";
             this.binarizeToolStripMenuItem.Click += new System.EventHandler(this.binarizeToolStripMenuItem_Click);
             // 
@@ -431,6 +434,36 @@
             this.backprojectionToolStripMenuItem.Text = "Backprojection";
             this.backprojectionToolStripMenuItem.Click += new System.EventHandler(this.backprojectionToolStripMenuItem_Click);
             // 
+            // ımageOverlayToolStripMenuItem
+            // 
+            this.ımageOverlayToolStripMenuItem.Name = "ımageOverlayToolStripMenuItem";
+            this.ımageOverlayToolStripMenuItem.Size = new System.Drawing.Size(230, 26);
+            this.ımageOverlayToolStripMenuItem.Text = "Image Overlay";
+            this.ımageOverlayToolStripMenuItem.Click += new System.EventHandler(this.ımageOverlayToolStripMenuItem_Click);
+            // 
+            // ımageInpaintToolStripMenuItem
+            // 
+            this.ımageInpaintToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectMaskToolStripMenuItem,
+            this.applyToolStripMenuItem});
+            this.ımageInpaintToolStripMenuItem.Name = "ımageInpaintToolStripMenuItem";
+            this.ımageInpaintToolStripMenuItem.Size = new System.Drawing.Size(230, 26);
+            this.ımageInpaintToolStripMenuItem.Text = "Image Inpaint";
+            // 
+            // selectMaskToolStripMenuItem
+            // 
+            this.selectMaskToolStripMenuItem.Name = "selectMaskToolStripMenuItem";
+            this.selectMaskToolStripMenuItem.Size = new System.Drawing.Size(170, 26);
+            this.selectMaskToolStripMenuItem.Text = "Select Mask";
+            this.selectMaskToolStripMenuItem.Click += new System.EventHandler(this.selectMaskToolStripMenuItem_Click);
+            // 
+            // applyToolStripMenuItem
+            // 
+            this.applyToolStripMenuItem.Name = "applyToolStripMenuItem";
+            this.applyToolStripMenuItem.Size = new System.Drawing.Size(170, 26);
+            this.applyToolStripMenuItem.Text = "Apply";
+            this.applyToolStripMenuItem.Click += new System.EventHandler(this.applyToolStripMenuItem_Click_1);
+            // 
             // segmentationToolStripMenuItem
             // 
             this.segmentationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -457,7 +490,8 @@
             // textToolStripMenuItem
             // 
             this.textToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.deskewTextToolStripMenuItem});
+            this.deskewTextToolStripMenuItem,
+            this.table2TextToolStripMenuItem});
             this.textToolStripMenuItem.Name = "textToolStripMenuItem";
             this.textToolStripMenuItem.Size = new System.Drawing.Size(50, 24);
             this.textToolStripMenuItem.Text = "Text";
@@ -465,7 +499,7 @@
             // deskewTextToolStripMenuItem
             // 
             this.deskewTextToolStripMenuItem.Name = "deskewTextToolStripMenuItem";
-            this.deskewTextToolStripMenuItem.Size = new System.Drawing.Size(174, 26);
+            this.deskewTextToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.deskewTextToolStripMenuItem.Text = "Deskew Text";
             this.deskewTextToolStripMenuItem.Click += new System.EventHandler(this.deskewTextToolStripMenuItem_Click);
             // 
@@ -548,35 +582,28 @@
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
             // 
-            // ımageOverlayToolStripMenuItem
+            // table2TextToolStripMenuItem
             // 
-            this.ımageOverlayToolStripMenuItem.Name = "ımageOverlayToolStripMenuItem";
-            this.ımageOverlayToolStripMenuItem.Size = new System.Drawing.Size(230, 26);
-            this.ımageOverlayToolStripMenuItem.Text = "Image Overlay";
-            this.ımageOverlayToolStripMenuItem.Click += new System.EventHandler(this.ımageOverlayToolStripMenuItem_Click);
+            this.table2TextToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.applyToolStripMenuItem1,
+            this.settingsToolStripMenuItem});
+            this.table2TextToolStripMenuItem.Name = "table2TextToolStripMenuItem";
+            this.table2TextToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.table2TextToolStripMenuItem.Text = "Table2Text";
             // 
-            // ımageInpaintToolStripMenuItem
+            // applyToolStripMenuItem1
             // 
-            this.ımageInpaintToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.selectMaskToolStripMenuItem,
-            this.applyToolStripMenuItem});
-            this.ımageInpaintToolStripMenuItem.Name = "ımageInpaintToolStripMenuItem";
-            this.ımageInpaintToolStripMenuItem.Size = new System.Drawing.Size(230, 26);
-            this.ımageInpaintToolStripMenuItem.Text = "Image Inpaint";
+            this.applyToolStripMenuItem1.Name = "applyToolStripMenuItem1";
+            this.applyToolStripMenuItem1.Size = new System.Drawing.Size(224, 26);
+            this.applyToolStripMenuItem1.Text = "Apply";
+            this.applyToolStripMenuItem1.Click += new System.EventHandler(this.applyToolStripMenuItem1_Click);
             // 
-            // selectMaskToolStripMenuItem
+            // settingsToolStripMenuItem
             // 
-            this.selectMaskToolStripMenuItem.Name = "selectMaskToolStripMenuItem";
-            this.selectMaskToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.selectMaskToolStripMenuItem.Text = "Select Mask";
-            this.selectMaskToolStripMenuItem.Click += new System.EventHandler(this.selectMaskToolStripMenuItem_Click);
-            // 
-            // applyToolStripMenuItem
-            // 
-            this.applyToolStripMenuItem.Name = "applyToolStripMenuItem";
-            this.applyToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.applyToolStripMenuItem.Text = "Apply";
-            this.applyToolStripMenuItem.Click += new System.EventHandler(this.applyToolStripMenuItem_Click_1);
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -662,6 +689,9 @@
         private System.Windows.Forms.ToolStripMenuItem ımageInpaintToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectMaskToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem applyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem table2TextToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem applyToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
     }
 }
 

@@ -16,6 +16,8 @@ using Emgu.CV.Cuda;
 using System.Runtime.InteropServices;
 using Emgu.CV.UI;
 using Emgu.CV.CvEnum;
+using Emgu.CV.OCR;
+using ClosedXML.Excel;
 
 namespace EmgucvDemo
 {
@@ -1512,6 +1514,166 @@ namespace EmgucvDemo
                 CvInvoke.Inpaint(img, mask, output, 3, InpaintType.Telea);
                 AddImage(output, "Image Inpaint");
                 pictureBox1.Image = output.AsBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void applyToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ApplyTable2Text();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void ApplyTable2Text(int NoCols = 4, float MorphThrehold = 30f,
+            int binaryThreshold= 200, int offset = 5)
+        {
+            try
+            {
+                if (pictureBox1.Image==null)
+                {
+                    return;
+                }
+
+                var img = new Bitmap(pictureBox1.Image)
+                    .ToImage<Gray, byte>()
+                    .ThresholdBinaryInv(new Gray(binaryThreshold), new Gray(255));
+
+                int length = (int)(img.Width * MorphThrehold / 100);
+
+                Mat vProfile = new Mat();
+                Mat hProfile = new Mat();
+
+                var kernelV = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(1, length), new Point(-1, -1));
+                var kernelH = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(length,1), new Point(-1, -1));
+
+                CvInvoke.Erode(img, vProfile, kernelV, new Point(-1, -1), 1, BorderType.Default, new MCvScalar(255));
+                CvInvoke.Dilate(vProfile,vProfile,kernelV,new Point(-1,-1),1, BorderType.Default, new MCvScalar(255));
+
+                CvInvoke.Erode(img, hProfile, kernelH, new Point(-1, -1), 1, BorderType.Default, new MCvScalar(255));
+                CvInvoke.Dilate(hProfile, hProfile, kernelH, new Point(-1, -1), 1, BorderType.Default, new MCvScalar(255));
+
+                var mergedImage = vProfile.ToImage<Gray, byte>().Or(hProfile.ToImage<Gray, byte>());
+                mergedImage._ThresholdBinary(new Gray(1), new Gray(255));
+
+                VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
+                Mat h = new Mat();
+
+                CvInvoke.FindContours(mergedImage, contours, h, RetrType.External, ChainApproxMethod.ChainApproxSimple);
+                int bigCID = GetBiggestContourID(contours);
+                var bbox = CvInvoke.BoundingRectangle(contours[bigCID]);
+
+                mergedImage.ROI = bbox;
+                img.ROI = bbox;
+                var temp = mergedImage.Copy();
+                temp._Not();
+
+                var imgTable = img.Copy();
+                contours.Clear();
+
+                CvInvoke.FindContours(temp, contours, h, RetrType.External, ChainApproxMethod.ChainApproxSimple);
+                var filtercontours = FilterContours(contours, 500);
+                var bboxList = Contours2BBox(filtercontours);
+                var sortedBBoxes = bboxList.OrderBy(x => x.Y).ThenBy(y => y.X).ToList();
+
+                // ocr part
+
+                string datapath = @"F:\AJ Data\Data\traineddata.eng\";
+                Tesseract ocr = new Tesseract(datapath, "eng", OcrEngineMode.TesseractOnly);
+                ocr.PageSegMode = PageSegMode.SingleBlock;
+
+                // write into excel
+
+                var workbook = new XLWorkbook();
+                var worksheet = workbook.Worksheets.Add("Outputs");
+
+                int rowCounter = 1;
+                char colCounter = 'A';
+
+                for (int i = 0; i < sortedBBoxes.Count; i++)
+                {
+                    var rect = sortedBBoxes[i];
+                    rect.X += offset;
+                    rect.Y += offset;
+                    rect.Width -= offset;
+                    rect.Height -= offset;
+
+                    imgTable.ROI = rect;
+                    ocr.SetImage(imgTable.Copy());
+
+                    string text = ocr.GetUTF8Text().Replace("\r\n", "");
+
+                    if (i%NoCols==0)
+                    {
+                        if (i>0)
+                        {
+                            rowCounter++;
+                        }
+                        colCounter = 'A';
+                        worksheet.Cell(colCounter.ToString() + rowCounter.ToString()).Value = text;
+                    }
+                    else
+                    {
+                        colCounter++;
+                        worksheet.Cell(colCounter + rowCounter.ToString()).Value = text;
+                    }
+                    imgTable.ROI = Rectangle.Empty;
+
+                }
+                string outputpath = @"F:\output\output.xlsx";
+                workbook.SaveAs(outputpath);
+
+                MessageBox.Show("Data is saved successfully in following location\n" + outputpath);
+                // pictureBox1.Image = temp.ToBitmap();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+        }
+
+        private VectorOfVectorOfPoint FilterContours(VectorOfVectorOfPoint contours, double threshold = 50)
+        {
+            VectorOfVectorOfPoint filteredContours = new VectorOfVectorOfPoint();
+            for (int i = 0; i < contours.Size; i++)
+            {
+                if (CvInvoke.ContourArea(contours[i])>=threshold)
+                {
+                    filteredContours.Push(contours[i]);
+                }
+            }
+
+            return filteredContours;
+        }
+        private List<Rectangle> Contours2BBox(VectorOfVectorOfPoint contours)
+        {
+            List<Rectangle> list = new List<Rectangle>();
+            for (int i = 0; i < contours.Size; i++)
+            {
+                list.Add(CvInvoke.BoundingRectangle(contours[i]));
+            }
+
+            return list;
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                formParameterTable2Text form = new formParameterTable2Text(4, 30, 200, 5);
+                form.OnApplyTable2Text += ApplyTable2Text;
+
+                form.ShowDialog();
             }
             catch (Exception ex)
             {
