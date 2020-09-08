@@ -14,10 +14,10 @@ using Emgu.CV.Util;
 using Emgu.CV.Flann;
 using Emgu.CV.Cuda;
 using System.Runtime.InteropServices;
-using Emgu.CV.UI;
 using Emgu.CV.CvEnum;
 using Emgu.CV.OCR;
 using ClosedXML.Excel;
+using Emgu.CV.UI;
 
 namespace EmgucvDemo
 {
@@ -1112,7 +1112,7 @@ namespace EmgucvDemo
                 HistogramViewer viewer = new HistogramViewer();
                 viewer.Text = "Image Histogram";
                 viewer.ShowIcon = false;
-                viewer.HistogramCtrl.AddHistogram("Image Histogram", Color.Blue, hist,
+                viewer.HistogramCtrl.GenerateHistogram("Image Histogram", Color.Blue, hist,
                     histSize[0], ranges);
                 viewer.HistogramCtrl.Refresh();
                 viewer.Show();
