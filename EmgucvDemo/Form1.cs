@@ -22,6 +22,8 @@ using EmgucvDemo.Models;
 using Emgu.CV.ML;
 using Emgu.CV.ML.MlEnum;
 using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Emgu.CV.Face;
 
 namespace EmgucvDemo
 {
@@ -1815,6 +1817,51 @@ namespace EmgucvDemo
 
                 FormConfusionMatrix form = new FormConfusionMatrix(cm, text);
                 form.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void landmarkDetectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (pictureBox1.Image==null)
+                {
+                    return;
+                }
+
+                string rootDirectory = System.IO.Path.GetFullPath(@"..\..\");
+                string lbpFacepath = rootDirectory + "data/lbpcascade_frontalface_improved.xml";
+                string modelPath = rootDirectory + "data/lbfmodel.yaml";
+
+                CascadeClassifier classifier = new CascadeClassifier(lbpFacepath);
+                FacemarkLBFParams facemarkLBF = new FacemarkLBFParams();
+                FacemarkLBF facemark = new FacemarkLBF(facemarkLBF);
+
+                var img = new Bitmap(pictureBox1.Image).ToImage<Bgr, byte>();
+                var imgGray = img.Convert<Gray, byte>();
+                var faces = classifier.DetectMultiScale(imgGray);
+
+                facemark.LoadModel(modelPath);
+
+                VectorOfVectorOfPointF landmarks = new VectorOfVectorOfPointF();
+                VectorOfRect rects = new VectorOfRect(faces);
+                bool result = facemark.Fit(imgGray, rects, landmarks);
+                if (result)
+                {
+                    for (int i = 0; i < faces.Length; i++)
+                    {
+                        FaceInvoke.DrawFacemarks(img, landmarks[i], new MCvScalar(0, 0, 255));
+                        var p = landmarks[i][33];
+                        CvInvoke.Circle(img, new Point((int)p.X, (int)p.Y), 5, new MCvScalar(0, 255, 0), -1);
+                    }
+                }
+
+                pictureBox1.Image = img.ToBitmap();
+
             }
             catch (Exception ex)
             {

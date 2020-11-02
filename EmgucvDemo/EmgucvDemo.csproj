@@ -164,6 +164,7 @@
     <EmbeddedResource Include="UIVideoPlayer.resx">
       <DependentUpon>UIVideoPlayer.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="data\lbfmodel.yaml" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -180,6 +181,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="data\haarcascade_frontalface_default.xml" />
+    <Content Include="data\lbpcascade_frontalface_improved.xml" />
     <Content Include="License-LGPL.txt" />
   </ItemGroup>
   <ItemGroup />
