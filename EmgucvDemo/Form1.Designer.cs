@@ -78,17 +78,24 @@
             this.grabCutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.textToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deskewTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.table2TextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.applyToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.videoProcessingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.blurFacesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.diabetesPredictionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testTrainSplitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.trainModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblStatus = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.panel3 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.table2TextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.applyToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -107,10 +114,11 @@
             this.processToolStripMenuItem1,
             this.segmentationToolStripMenuItem,
             this.textToolStripMenuItem,
-            this.videoProcessingToolStripMenuItem});
+            this.videoProcessingToolStripMenuItem,
+            this.mLToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1055, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1055, 30);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -119,7 +127,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 24);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 26);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // exitToolStripMenuItem
@@ -137,7 +145,7 @@
             this.featureMatchingToolStripMenuItem,
             this.featureDetectorToolStripMenuItem});
             this.processToolStripMenuItem.Name = "processToolStripMenuItem";
-            this.processToolStripMenuItem.Size = new System.Drawing.Size(95, 24);
+            this.processToolStripMenuItem.Size = new System.Drawing.Size(95, 26);
             this.processToolStripMenuItem.Text = "Feature 2D";
             // 
             // processROIToolStripMenuItem
@@ -287,7 +295,7 @@
             this.transformationsToolStripMenuItem,
             this.binarizeToolStripMenuItem});
             this.utilityToolStripMenuItem.Name = "utilityToolStripMenuItem";
-            this.utilityToolStripMenuItem.Size = new System.Drawing.Size(62, 24);
+            this.utilityToolStripMenuItem.Size = new System.Drawing.Size(62, 26);
             this.utilityToolStripMenuItem.Text = "Utility";
             // 
             // transformationsToolStripMenuItem
@@ -329,7 +337,7 @@
             this.ımageOverlayToolStripMenuItem,
             this.ımageInpaintToolStripMenuItem});
             this.processToolStripMenuItem1.Name = "processToolStripMenuItem1";
-            this.processToolStripMenuItem1.Size = new System.Drawing.Size(72, 24);
+            this.processToolStripMenuItem1.Size = new System.Drawing.Size(72, 26);
             this.processToolStripMenuItem1.Text = "Process";
             // 
             // findContoursSortToolStripMenuItem
@@ -470,7 +478,7 @@
             this.watershedToolStripMenuItem,
             this.grabCutToolStripMenuItem});
             this.segmentationToolStripMenuItem.Name = "segmentationToolStripMenuItem";
-            this.segmentationToolStripMenuItem.Size = new System.Drawing.Size(116, 24);
+            this.segmentationToolStripMenuItem.Size = new System.Drawing.Size(116, 26);
             this.segmentationToolStripMenuItem.Text = "Segmentation";
             // 
             // watershedToolStripMenuItem
@@ -493,30 +501,100 @@
             this.deskewTextToolStripMenuItem,
             this.table2TextToolStripMenuItem});
             this.textToolStripMenuItem.Name = "textToolStripMenuItem";
-            this.textToolStripMenuItem.Size = new System.Drawing.Size(50, 24);
+            this.textToolStripMenuItem.Size = new System.Drawing.Size(50, 26);
             this.textToolStripMenuItem.Text = "Text";
             // 
             // deskewTextToolStripMenuItem
             // 
             this.deskewTextToolStripMenuItem.Name = "deskewTextToolStripMenuItem";
-            this.deskewTextToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.deskewTextToolStripMenuItem.Size = new System.Drawing.Size(174, 26);
             this.deskewTextToolStripMenuItem.Text = "Deskew Text";
             this.deskewTextToolStripMenuItem.Click += new System.EventHandler(this.deskewTextToolStripMenuItem_Click);
+            // 
+            // table2TextToolStripMenuItem
+            // 
+            this.table2TextToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.applyToolStripMenuItem1,
+            this.settingsToolStripMenuItem});
+            this.table2TextToolStripMenuItem.Name = "table2TextToolStripMenuItem";
+            this.table2TextToolStripMenuItem.Size = new System.Drawing.Size(174, 26);
+            this.table2TextToolStripMenuItem.Text = "Table2Text";
+            // 
+            // applyToolStripMenuItem1
+            // 
+            this.applyToolStripMenuItem1.Name = "applyToolStripMenuItem1";
+            this.applyToolStripMenuItem1.Size = new System.Drawing.Size(145, 26);
+            this.applyToolStripMenuItem1.Text = "Apply";
+            this.applyToolStripMenuItem1.Click += new System.EventHandler(this.applyToolStripMenuItem1_Click);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(145, 26);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // videoProcessingToolStripMenuItem
             // 
             this.videoProcessingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.blurFacesToolStripMenuItem});
             this.videoProcessingToolStripMenuItem.Name = "videoProcessingToolStripMenuItem";
-            this.videoProcessingToolStripMenuItem.Size = new System.Drawing.Size(136, 24);
+            this.videoProcessingToolStripMenuItem.Size = new System.Drawing.Size(136, 26);
             this.videoProcessingToolStripMenuItem.Text = "Video Processing";
             // 
             // blurFacesToolStripMenuItem
             // 
             this.blurFacesToolStripMenuItem.Name = "blurFacesToolStripMenuItem";
-            this.blurFacesToolStripMenuItem.Size = new System.Drawing.Size(157, 26);
+            this.blurFacesToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.blurFacesToolStripMenuItem.Text = "Blur Faces";
             this.blurFacesToolStripMenuItem.Click += new System.EventHandler(this.blurFacesToolStripMenuItem_Click);
+            // 
+            // mLToolStripMenuItem
+            // 
+            this.mLToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.diabetesPredictionToolStripMenuItem});
+            this.mLToolStripMenuItem.Name = "mLToolStripMenuItem";
+            this.mLToolStripMenuItem.Size = new System.Drawing.Size(43, 26);
+            this.mLToolStripMenuItem.Text = "ML";
+            // 
+            // diabetesPredictionToolStripMenuItem
+            // 
+            this.diabetesPredictionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadDataToolStripMenuItem,
+            this.testTrainSplitToolStripMenuItem,
+            this.trainModelToolStripMenuItem,
+            this.testModelToolStripMenuItem});
+            this.diabetesPredictionToolStripMenuItem.Name = "diabetesPredictionToolStripMenuItem";
+            this.diabetesPredictionToolStripMenuItem.Size = new System.Drawing.Size(222, 26);
+            this.diabetesPredictionToolStripMenuItem.Text = "Diabetes Prediction";
+            // 
+            // loadDataToolStripMenuItem
+            // 
+            this.loadDataToolStripMenuItem.Name = "loadDataToolStripMenuItem";
+            this.loadDataToolStripMenuItem.Size = new System.Drawing.Size(188, 26);
+            this.loadDataToolStripMenuItem.Text = "Load Data";
+            this.loadDataToolStripMenuItem.Click += new System.EventHandler(this.loadDataToolStripMenuItem_Click);
+            // 
+            // testTrainSplitToolStripMenuItem
+            // 
+            this.testTrainSplitToolStripMenuItem.Name = "testTrainSplitToolStripMenuItem";
+            this.testTrainSplitToolStripMenuItem.Size = new System.Drawing.Size(188, 26);
+            this.testTrainSplitToolStripMenuItem.Text = "Test Train Split";
+            this.testTrainSplitToolStripMenuItem.Click += new System.EventHandler(this.testTrainSplitToolStripMenuItem_Click);
+            // 
+            // trainModelToolStripMenuItem
+            // 
+            this.trainModelToolStripMenuItem.Name = "trainModelToolStripMenuItem";
+            this.trainModelToolStripMenuItem.Size = new System.Drawing.Size(188, 26);
+            this.trainModelToolStripMenuItem.Text = "Train Model";
+            this.trainModelToolStripMenuItem.Click += new System.EventHandler(this.trainModelToolStripMenuItem_Click);
+            // 
+            // testModelToolStripMenuItem
+            // 
+            this.testModelToolStripMenuItem.Name = "testModelToolStripMenuItem";
+            this.testModelToolStripMenuItem.Size = new System.Drawing.Size(188, 26);
+            this.testModelToolStripMenuItem.Text = "Test Model";
+            this.testModelToolStripMenuItem.Click += new System.EventHandler(this.testModelToolStripMenuItem_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -526,21 +604,30 @@
             this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.panel3, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 28);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 30);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1055, 610);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1055, 608);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.lblStatus);
             this.panel1.Controls.Add(this.panel2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(205, 604);
+            this.panel1.Size = new System.Drawing.Size(205, 602);
             this.panel1.TabIndex = 0;
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.AutoSize = true;
+            this.lblStatus.Location = new System.Drawing.Point(4, 381);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(0, 17);
+            this.lblStatus.TabIndex = 1;
             // 
             // panel2
             // 
@@ -566,7 +653,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(214, 3);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(838, 604);
+            this.panel3.Size = new System.Drawing.Size(838, 602);
             this.panel3.TabIndex = 1;
             // 
             // pictureBox1
@@ -574,36 +661,13 @@
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(838, 604);
+            this.pictureBox1.Size = new System.Drawing.Size(838, 602);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
             this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
-            // 
-            // table2TextToolStripMenuItem
-            // 
-            this.table2TextToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.applyToolStripMenuItem1,
-            this.settingsToolStripMenuItem});
-            this.table2TextToolStripMenuItem.Name = "table2TextToolStripMenuItem";
-            this.table2TextToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.table2TextToolStripMenuItem.Text = "Table2Text";
-            // 
-            // applyToolStripMenuItem1
-            // 
-            this.applyToolStripMenuItem1.Name = "applyToolStripMenuItem1";
-            this.applyToolStripMenuItem1.Size = new System.Drawing.Size(224, 26);
-            this.applyToolStripMenuItem1.Text = "Apply";
-            this.applyToolStripMenuItem1.Click += new System.EventHandler(this.applyToolStripMenuItem1_Click);
-            // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.settingsToolStripMenuItem.Text = "Settings";
-            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -621,6 +685,7 @@
             this.menuStrip1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -692,6 +757,13 @@
         private System.Windows.Forms.ToolStripMenuItem table2TextToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem applyToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mLToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem diabetesPredictionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loadDataToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem testTrainSplitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem trainModelToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem testModelToolStripMenuItem;
+        private System.Windows.Forms.Label lblStatus;
     }
 }
 

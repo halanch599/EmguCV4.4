@@ -18,6 +18,10 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.OCR;
 using ClosedXML.Excel;
 using Emgu.CV.UI;
+using EmgucvDemo.Models;
+using Emgu.CV.ML;
+using Emgu.CV.ML.MlEnum;
+using System.IO;
 
 namespace EmgucvDemo
 {
@@ -32,6 +36,15 @@ namespace EmgucvDemo
         List<Point> InpaintCurrentPoints = null;
         bool InpaintMouseDown = false;
         bool InpaintSelection = false;
+
+        // for diabetest
+        Matrix<float> Data_Set = null;
+        Matrix<int> Data_Label = null;
+        Matrix<float> x_train = null, x_test = null;
+        Matrix<int> y_train = null, y_test = null;
+        ANN_MLP ANN = null;
+        List<int> PredictedLabel = null;
+        List<int> ActualLabel = null;
         public Form1()
         {
             InitializeComponent();
@@ -1674,6 +1687,166 @@ namespace EmgucvDemo
                 form.OnApplyTable2Text += ApplyTable2Text;
 
                 form.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void trainModelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (x_train==null || y_train==null)
+                {
+                    throw new Exception("No data is found for training.");
+                }
+
+                FormANNParameters form = new FormANNParameters();
+                form.OnApplyANN += ApplyANN;
+                form.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        public void ApplyANN( ANN_MLP.AnnMlpActivationFunction annMlpActivationFunction= ANN_MLP.AnnMlpActivationFunction.SigmoidSym,
+            ANN_MLP.AnnMlpTrainMethod TrainMethod = ANN_MLP.AnnMlpTrainMethod.Backprop,
+            float Momentum = 0.01f,
+            int Iterations = 500,
+            float RMSE = 0.001f,
+            int [] Layers = null,
+            bool LoadSavedModel = false)
+        {
+            try
+            {
+                int NoClasses = HelperClass.GetClassCount(y_train);
+                var HotVectors = HelperClass.HotMatrix(y_train, NoClasses);
+
+                if(Layers==null)
+                {
+                    Layers = new int[] {x_train.Cols,20,NoClasses };
+                }
+
+                if (Layers[0]!=x_train.Cols)
+                {
+                    throw new Exception("Input neurons must be " + x_train.Cols);
+                }
+                if (Layers[Layers.Length-1] != NoClasses)
+                {
+                    throw new Exception("Output neurons must be " + NoClasses);
+                }
+
+                Matrix<int> LayerSize = new Matrix<int>(Layers);
+
+                // Create ANN Model
+                ANN = new ANN_MLP();
+                ANN.SetTrainMethod(TrainMethod);
+                ANN.SetLayerSizes(LayerSize);
+                ANN.TermCriteria = new MCvTermCriteria(Iterations, RMSE);
+                ANN.SetActivationFunction(annMlpActivationFunction);
+                ANN.BackpropMomentumScale = Momentum;
+
+                TrainData data = new TrainData(x_train, Emgu.CV.ML.MlEnum.DataLayoutType.RowSample
+                    , HotVectors.Convert<float>());
+
+                string ModelName = "ANN.txt";
+                if (LoadSavedModel == true)
+                {
+                    if (File.Exists(ModelName))
+                    {
+                        FileStorage file = new FileStorage(ModelName, FileStorage.Mode.Read);
+                        ANN.Read(file.GetNode("opencv_ml_ann_mlp"));
+                        lblStatus.Text = "Model Loaded";
+                    }
+                }
+                else
+                {
+                    var result = ANN.Train(data, (int)AnnMlpTrainingFlag.Default);
+
+                    if (result == true)
+                    {
+                        lblStatus.Text = "Model is trained";
+                        ANN.Save(ModelName);
+                    }
+                    else
+                    {
+                        lblStatus.Text = "Model could not be trained.";
+                    }
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        private void testModelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (x_test==null || y_test==null || ANN==null)
+                {
+                    throw new Exception("No test data or trained ANN was found.");
+                }
+
+                PredictedLabel = new List<int>();
+                ActualLabel = new List<int>();
+
+                for (int i = 0; i < x_test.Rows; i++)
+                {
+                    var pred = ANN.Predict(x_test.GetRow(i));
+                    PredictedLabel.Add((int)pred);
+                    ActualLabel.Add(y_test[i, 0]);
+                }
+
+                //Evalation
+                var cm = HelperClass.ComputeConfusionMatrix(ActualLabel.ToArray(), PredictedLabel.ToArray());
+                var metrics = HelperClass.CalculateMetrics(cm, ActualLabel.ToArray(), PredictedLabel.ToArray());
+                string text = string.Format("Test Samples = {0} \n" +
+                    "Accuracy = {1:0.00}%\nPrecision = {2:0.00}%\nRecall = {3:0.00}%"
+                    , ActualLabel.Count, metrics[0] * 100, metrics[1] * 100, metrics[2] * 100);
+
+                //lblStatus.Text = text;
+
+                FormConfusionMatrix form = new FormConfusionMatrix(cm, text);
+                form.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void loadDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string path = @"F:\AJ Data\Data\diabetes.csv";
+                (Data_Set, Data_Label) = HelperClass.ReadCSV(path, true, ',', 8);
+                lblStatus.Text = "Data Loaded.";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void testTrainSplitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (Data_Set==null || Data_Label==null)
+                {
+                    throw new Exception("Load data first.");
+                }
+
+                (x_train, y_train, x_test, y_test) = HelperClass.TestTrainSplit(Data_Set, Data_Label, 0.2f);
+                lblStatus.Text = "Data split into test and train.";
             }
             catch (Exception ex)
             {
