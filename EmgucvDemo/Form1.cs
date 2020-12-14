@@ -1869,6 +1869,63 @@ namespace EmgucvDemo
             }
         }
 
+        private void hConcatToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                List<Image<Bgr, byte>> list = new List<Image<Bgr, byte>>();
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.Filter = "Image Files (*.jpg, *.jpeg, *.png|*.jpg;*.jpeg;*.png)";
+                dialog.Multiselect = true;
+                if (dialog.ShowDialog()==DialogResult.OK)
+                {
+                    foreach (var file in dialog.FileNames)
+                    {
+                        list.Add(new Image<Bgr, byte>(file));
+                    }
+                }
+
+                if (list.Count>0)
+                {
+                    var img = HelperClass.HConcatenateImages(list);
+                    pictureBox1.Image = img.AsBitmap();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void vConcatToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                List<Image<Bgr, byte>> list = new List<Image<Bgr, byte>>();
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.Filter = "Image Files (*.jpg, *.jpeg, *.png|*.jpg;*.jpeg;*.png)";
+                dialog.Multiselect = true;
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    foreach (var file in dialog.FileNames)
+                    {
+                        list.Add(new Image<Bgr, byte>(file));
+                    }
+                }
+
+                if (list.Count > 0)
+                {
+                    var img = HelperClass.VConcatenateImages(list);
+                    //var img = HelperClass.VConcatenateImages(list[0],list[1]);
+                    pictureBox1.Image = img.AsBitmap();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         private void loadDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
