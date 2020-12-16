@@ -29,6 +29,12 @@ namespace EmgucvDemo
 {
     public partial class Form1 : Form
     {
+        List<int> PredictedLabels = null;
+        List<int> ActualLabels = null;
+        SVM svmModel;
+        List<FaceData> DataSet = new List<FaceData>();
+        List<FaceData> TrainingData;
+        List<FaceData> TestingData;
         Dictionary<string, Image<Bgr, byte>> imgList;
         Rectangle rect;
         Point StartROI;
@@ -1919,6 +1925,253 @@ namespace EmgucvDemo
                     //var img = HelperClass.VConcatenateImages(list[0],list[1]);
                     pictureBox1.Image = img.AsBitmap();
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void loadDataToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                FolderBrowserDialog dialog = new FolderBrowserDialog();
+                if (dialog.ShowDialog()==DialogResult.OK)
+                {
+                    Cursor= Cursors.WaitCursor;
+
+                    var files = Directory.GetFiles(dialog.SelectedPath);
+                    foreach (var file in files)
+                    {
+                        var img = new Image<Gray, byte>(file).Resize(256,256,Inter.Cubic);
+                        var name = Path.GetFileName(file);
+                        int label = int.Parse(name.Substring(name.IndexOf(".")-2,2));
+                        var index = DataSet.FindIndex(x => x.Label == label);
+                        if (index>-1)
+                        {
+                            DataSet[index].Images.Add(img);
+                        }
+                        else
+                        {
+                            FaceData face = new FaceData();
+                            face.Images = new List<Image<Gray, byte>>();
+                            face.Images.Add(img);
+                            face.Label = label;
+                            DataSet.Add(face);
+                        }
+                    }
+                    lblStatus.Text = "Data Loaded.";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private void testTrainSplitToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (DataSet==null || DataSet.Count==0)
+                {
+                    throw new Exception("Dataset is empty.");
+                }
+
+              (TrainingData,TestingData) =   HelperClass.TestTrainSplit(DataSet);
+                lblStatus.Text = "Test-Train Split done.";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void hOGFeatureExtractionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (TrainingData==null || TestingData==null)
+                {
+                    throw new Exception("Test or Train data not found.");
+                }
+                Cursor = Cursors.WaitCursor;
+              (x_train, y_train) =   CalculateHoGFeatures(TrainingData);
+                lblStatus.Text = "Training: Hog extracted.";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private (Matrix<float>, Matrix<int>) CalculateHoGFeatures(List<FaceData> data) 
+        {
+            try
+            {
+                HOGDescriptor hog = new HOGDescriptor(new Size(256,256),new Size(32,32),
+                    new Size(16,16),new Size(8,8));
+
+                List<float[]> hogfeatures = new List<float[]>();
+                List<int> labels = new List<int>();
+
+                foreach (var item in data)
+                {
+                    foreach (var img in item.Images)
+                    {
+                        var features = hog.Compute(img);
+                        hogfeatures.Add(features);
+                        labels.Add(item.Label);
+                    }
+                }
+
+              var  xtrain = new Matrix<float>(HelperClass.To2D<float>(hogfeatures.ToArray()));
+              var ytrain = new Matrix<int>(labels.ToArray());
+
+                return (xtrain, ytrain);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        private void trainSVMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+                lblStatus.Text = "";
+                lblStatus.ForeColor = Color.Black;
+
+
+                if (x_train==null || x_train.Rows<1)
+                {
+                    throw new Exception("Load Training data features.");
+                }
+
+                svmModel = new SVM();
+                if (File.Exists("face_svm"))
+                {
+                    svmModel.Load("face_svm");
+                    lblStatus.Text = "Trained Model Loaded.";
+                }
+                else
+                {
+                    svmModel.SetKernel(SVM.SvmKernelType.Rbf);
+                    svmModel.Type = SVM.SvmType.CSvc;
+                    svmModel.TermCriteria = new MCvTermCriteria(1000, 0.00001);
+                    svmModel.C = 250;
+                    svmModel.Gamma = 0.001;
+
+                    TrainData traindata = new TrainData(x_train, DataLayoutType.RowSample, y_train);
+                    if (svmModel.Train(traindata))
+                    {
+                        svmModel.Save("face_svm");
+                        lblStatus.Text = "Model Trained & Saved.";
+                    }
+                    else
+                    {
+                        lblStatus.Text = "Model failed to train.";
+                        lblStatus.ForeColor = Color.Red;
+                    }
+
+                }
+                
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+
+            }
+        }
+
+        private void testSVMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (svmModel == null)
+                {
+                    throw new Exception("SVM is not trained.");
+                }
+
+                (x_test, y_test) = CalculateHoGFeatures(TestingData);
+
+                if (x_test==null || x_test.Rows<1)
+                {
+                    throw new Exception("Load Testing data.");
+                }
+
+
+                PredictedLabels = new List<int>();
+                ActualLabels = new List<int>();
+
+
+                for (int i = 0; i < x_test.Rows; i++)
+                {
+                    var prediction = svmModel.Predict(x_test.GetRow(i));
+                    PredictedLabels.Add((int)prediction);
+                    ActualLabels.Add(y_test[i, 0]);
+                }
+
+                var cm = HelperClass.ComputeConfusionMatrix(ActualLabels.ToArray(), PredictedLabels.ToArray());
+                var metrics =  HelperClass.CalculateMetrics(cm,ActualLabels.ToArray(), PredictedLabels.ToArray());
+                string results = $"Test Samples = {ActualLabels.Count} \n Accuracy = {metrics[0]*100}% " +
+                    $"\nPrecision = {metrics[1]*100}% \n Recall = {metrics[2]*100}%";
+
+                FormConfusionMatrix form = new FormConfusionMatrix(cm, results);
+                form.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void showResultsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (PredictedLabels==null || ActualLabels==null)
+                {
+                    throw new Exception("No predictions found.");
+                }
+
+                Random random = new Random();
+                int index = random.Next(PredictedLabels.Count-1);
+                int predLabel = PredictedLabels[index];
+                int actualLabel = ActualLabels[index];
+
+                var predImage = (from img in TestingData
+                                 where img.Label == predLabel
+                                 select img.Images[random.Next(img.Images.Count)])
+                                .FirstOrDefault().Clone();
+
+                var actualImage = (from img in TestingData
+                                 where img.Label == actualLabel
+                                   select img.Images[random.Next(img.Images.Count)])
+                                .FirstOrDefault().Clone();
+                CvInvoke.PutText(predImage, "Predicted", new Point(30, 30), FontFace.HersheyPlain, 1.0, new MCvScalar(0));
+                CvInvoke.PutText(actualImage, "Actual", new Point(30, 30), FontFace.HersheyPlain, 1.0, new MCvScalar(0));
+
+                var imgOutput =  HelperClass.HConcatenateImages(predImage.Convert<Bgr, byte>(), actualImage.Convert<Bgr, byte>());
+                pictureBox1.Image = imgOutput.AsBitmap();
             }
             catch (Exception ex)
             {

@@ -17,6 +17,66 @@ namespace EmgucvDemo.Models
 {
    public class HelperClass
     {
+
+        public static T[,] To2D<T>(T[][] source)
+        {
+            try
+            {
+                int FirstDim = source.Length;
+                int SecondDim = source.GroupBy(row => row.Length).Single().Key; // throws InvalidOperationException if source is not rectangular
+
+                var result = new T[FirstDim, SecondDim];
+                for (int i = 0; i < FirstDim; ++i)
+                    for (int j = 0; j < SecondDim; ++j)
+                        result[i, j] = source[i][j];
+
+                return result;
+            }
+            catch (InvalidOperationException)
+            {
+                throw new InvalidOperationException("The given jagged array is not rectangular.");
+            }
+        }
+
+        public static (List<FaceData>, List<FaceData>) TestTrainSplit(List<FaceData> data,float split=0.8f)
+        {
+            try
+            {
+                if (data.Count<1)
+                {
+                    throw new Exception("Data is not found.");
+                }
+
+                int numTrainSamples = (int)Math.Floor(data[0].Images.Count*split);
+                int numTestSamples = data[0].Images.Count - numTrainSamples;
+
+                if (numTrainSamples==0|| numTestSamples==0)
+                {
+                    throw new Exception("Insufficient training or testing data.");
+                }
+
+                List<FaceData> TestData = (from d in data
+                                           select new FaceData
+                                           {
+                                               Images = d.Images.Take(numTestSamples).ToList(),
+                                               Label = d.Label
+                                           }).ToList();
+
+                List<FaceData> TrainData = (from d in data
+                                           select new FaceData
+                                           {
+                                               Images = d.Images.Skip(numTestSamples)
+                                               .Take(numTrainSamples).ToList(),
+                                               Label = d.Label
+                                           }).ToList();
+                return (TrainData,TestData);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
         public static Image<Bgr, byte> HConcatenateImages(List<Image<Bgr, byte>> images)
         {
             try
@@ -294,8 +354,8 @@ namespace EmgucvDemo.Models
                 int[,] CM = new int[NoClasses, NoClasses];
                 for (int i = 0; i < actual.Length; i++)
                 {
-                    int r = predicted[i];
-                    int c = actual[i];
+                    int r = predicted[i]-1;
+                    int c = actual[i]-1;
                     CM[r, c]++;
                 }
                 return CM;

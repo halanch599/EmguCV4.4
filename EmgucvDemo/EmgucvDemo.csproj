@@ -128,6 +128,7 @@
     <Compile Include="formParameterTable2Text.Designer.cs">
       <DependentUpon>formParameterTable2Text.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\FaceData.cs" />
     <Compile Include="Models\HelperClass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

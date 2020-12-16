@@ -56,6 +56,9 @@
             this.rotationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.binarizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.processToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.ımagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hConcatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.vConcatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findContoursSortToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.objectDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorBasedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,6 +94,13 @@
             this.testModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.faceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.landmarkDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.faceRecognitionHOGSVMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadDataToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.testTrainSplitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.hOGFeatureExtractionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.trainSVMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testSVMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showResultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblStatus = new System.Windows.Forms.Label();
@@ -98,9 +108,6 @@
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.panel3 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.ımagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hConcatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.vConcatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -124,7 +131,7 @@
             this.faceToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1055, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1055, 30);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -344,8 +351,31 @@
             this.ımageOverlayToolStripMenuItem,
             this.ımageInpaintToolStripMenuItem});
             this.processToolStripMenuItem1.Name = "processToolStripMenuItem1";
-            this.processToolStripMenuItem1.Size = new System.Drawing.Size(72, 24);
+            this.processToolStripMenuItem1.Size = new System.Drawing.Size(72, 26);
             this.processToolStripMenuItem1.Text = "Process";
+            // 
+            // ımagesToolStripMenuItem
+            // 
+            this.ımagesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.hConcatToolStripMenuItem,
+            this.vConcatToolStripMenuItem});
+            this.ımagesToolStripMenuItem.Name = "ımagesToolStripMenuItem";
+            this.ımagesToolStripMenuItem.Size = new System.Drawing.Size(230, 26);
+            this.ımagesToolStripMenuItem.Text = "Images";
+            // 
+            // hConcatToolStripMenuItem
+            // 
+            this.hConcatToolStripMenuItem.Name = "hConcatToolStripMenuItem";
+            this.hConcatToolStripMenuItem.Size = new System.Drawing.Size(149, 26);
+            this.hConcatToolStripMenuItem.Text = "HConcat";
+            this.hConcatToolStripMenuItem.Click += new System.EventHandler(this.hConcatToolStripMenuItem_Click);
+            // 
+            // vConcatToolStripMenuItem
+            // 
+            this.vConcatToolStripMenuItem.Name = "vConcatToolStripMenuItem";
+            this.vConcatToolStripMenuItem.Size = new System.Drawing.Size(149, 26);
+            this.vConcatToolStripMenuItem.Text = "VConcat";
+            this.vConcatToolStripMenuItem.Click += new System.EventHandler(this.vConcatToolStripMenuItem_Click);
             // 
             // findContoursSortToolStripMenuItem
             // 
@@ -606,7 +636,8 @@
             // faceToolStripMenuItem
             // 
             this.faceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.landmarkDetectionToolStripMenuItem});
+            this.landmarkDetectionToolStripMenuItem,
+            this.faceRecognitionHOGSVMToolStripMenuItem});
             this.faceToolStripMenuItem.Name = "faceToolStripMenuItem";
             this.faceToolStripMenuItem.Size = new System.Drawing.Size(52, 26);
             this.faceToolStripMenuItem.Text = "Face";
@@ -614,9 +645,64 @@
             // landmarkDetectionToolStripMenuItem
             // 
             this.landmarkDetectionToolStripMenuItem.Name = "landmarkDetectionToolStripMenuItem";
-            this.landmarkDetectionToolStripMenuItem.Size = new System.Drawing.Size(226, 26);
+            this.landmarkDetectionToolStripMenuItem.Size = new System.Drawing.Size(275, 26);
             this.landmarkDetectionToolStripMenuItem.Text = "Landmark Detection";
             this.landmarkDetectionToolStripMenuItem.Click += new System.EventHandler(this.landmarkDetectionToolStripMenuItem_Click);
+            // 
+            // faceRecognitionHOGSVMToolStripMenuItem
+            // 
+            this.faceRecognitionHOGSVMToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadDataToolStripMenuItem1,
+            this.testTrainSplitToolStripMenuItem1,
+            this.hOGFeatureExtractionToolStripMenuItem,
+            this.trainSVMToolStripMenuItem,
+            this.testSVMToolStripMenuItem,
+            this.showResultsToolStripMenuItem});
+            this.faceRecognitionHOGSVMToolStripMenuItem.Name = "faceRecognitionHOGSVMToolStripMenuItem";
+            this.faceRecognitionHOGSVMToolStripMenuItem.Size = new System.Drawing.Size(275, 26);
+            this.faceRecognitionHOGSVMToolStripMenuItem.Text = "Face Recognition HOG SVM";
+            // 
+            // loadDataToolStripMenuItem1
+            // 
+            this.loadDataToolStripMenuItem1.Name = "loadDataToolStripMenuItem1";
+            this.loadDataToolStripMenuItem1.Size = new System.Drawing.Size(247, 26);
+            this.loadDataToolStripMenuItem1.Text = "Load Data";
+            this.loadDataToolStripMenuItem1.Click += new System.EventHandler(this.loadDataToolStripMenuItem1_Click);
+            // 
+            // testTrainSplitToolStripMenuItem1
+            // 
+            this.testTrainSplitToolStripMenuItem1.Name = "testTrainSplitToolStripMenuItem1";
+            this.testTrainSplitToolStripMenuItem1.Size = new System.Drawing.Size(247, 26);
+            this.testTrainSplitToolStripMenuItem1.Text = "Test Train Split";
+            this.testTrainSplitToolStripMenuItem1.Click += new System.EventHandler(this.testTrainSplitToolStripMenuItem1_Click);
+            // 
+            // hOGFeatureExtractionToolStripMenuItem
+            // 
+            this.hOGFeatureExtractionToolStripMenuItem.Name = "hOGFeatureExtractionToolStripMenuItem";
+            this.hOGFeatureExtractionToolStripMenuItem.Size = new System.Drawing.Size(247, 26);
+            this.hOGFeatureExtractionToolStripMenuItem.Text = "HOG Feature Extraction";
+            this.hOGFeatureExtractionToolStripMenuItem.Click += new System.EventHandler(this.hOGFeatureExtractionToolStripMenuItem_Click);
+            // 
+            // trainSVMToolStripMenuItem
+            // 
+            this.trainSVMToolStripMenuItem.Name = "trainSVMToolStripMenuItem";
+            this.trainSVMToolStripMenuItem.Size = new System.Drawing.Size(247, 26);
+            this.trainSVMToolStripMenuItem.Text = "Train SVM";
+            this.trainSVMToolStripMenuItem.Click += new System.EventHandler(this.trainSVMToolStripMenuItem_Click);
+            // 
+            // testSVMToolStripMenuItem
+            // 
+            this.testSVMToolStripMenuItem.Name = "testSVMToolStripMenuItem";
+            this.testSVMToolStripMenuItem.Size = new System.Drawing.Size(247, 26);
+            this.testSVMToolStripMenuItem.Text = "Test SVM";
+            this.testSVMToolStripMenuItem.Click += new System.EventHandler(this.testSVMToolStripMenuItem_Click);
+            // 
+            // showResultsToolStripMenuItem
+            // 
+            this.showResultsToolStripMenuItem.Name = "showResultsToolStripMenuItem";
+            this.showResultsToolStripMenuItem.Size = new System.Drawing.Size(247, 26);
+            this.showResultsToolStripMenuItem.Text = "Show Results";
+            this.showResultsToolStripMenuItem.Click += new System.EventHandler(this.showResultsToolStripMenuItem_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -626,11 +712,11 @@
             this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.panel3, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 28);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 30);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1055, 610);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1055, 608);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // panel1
@@ -640,15 +726,17 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(205, 604);
+            this.panel1.Size = new System.Drawing.Size(205, 602);
             this.panel1.TabIndex = 0;
             // 
             // lblStatus
             // 
             this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(4, 381);
+            this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblStatus.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.lblStatus.Location = new System.Drawing.Point(9, 383);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(0, 17);
+            this.lblStatus.Size = new System.Drawing.Size(0, 18);
             this.lblStatus.TabIndex = 1;
             // 
             // panel2
@@ -675,7 +763,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(214, 3);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(838, 604);
+            this.panel3.Size = new System.Drawing.Size(838, 602);
             this.panel3.TabIndex = 1;
             // 
             // pictureBox1
@@ -690,29 +778,6 @@
             this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
-            // 
-            // ımagesToolStripMenuItem
-            // 
-            this.ımagesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.hConcatToolStripMenuItem,
-            this.vConcatToolStripMenuItem});
-            this.ımagesToolStripMenuItem.Name = "ımagesToolStripMenuItem";
-            this.ımagesToolStripMenuItem.Size = new System.Drawing.Size(230, 26);
-            this.ımagesToolStripMenuItem.Text = "Images";
-            // 
-            // hConcatToolStripMenuItem
-            // 
-            this.hConcatToolStripMenuItem.Name = "hConcatToolStripMenuItem";
-            this.hConcatToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.hConcatToolStripMenuItem.Text = "HConcat";
-            this.hConcatToolStripMenuItem.Click += new System.EventHandler(this.hConcatToolStripMenuItem_Click);
-            // 
-            // vConcatToolStripMenuItem
-            // 
-            this.vConcatToolStripMenuItem.Name = "vConcatToolStripMenuItem";
-            this.vConcatToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.vConcatToolStripMenuItem.Text = "VConcat";
-            this.vConcatToolStripMenuItem.Click += new System.EventHandler(this.vConcatToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -815,6 +880,13 @@
         private System.Windows.Forms.ToolStripMenuItem ımagesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hConcatToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem vConcatToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem faceRecognitionHOGSVMToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loadDataToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem testTrainSplitToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem hOGFeatureExtractionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem trainSVMToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem testSVMToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showResultsToolStripMenuItem;
     }
 }
 
