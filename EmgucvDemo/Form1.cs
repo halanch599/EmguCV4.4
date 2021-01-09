@@ -2179,6 +2179,31 @@ namespace EmgucvDemo
             }
         }
 
+        private void brightnessContrastToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (imgList.Count==0 || imgList["Input"]==null)
+                {
+                    throw new Exception("Please select an Image.");
+                }
+
+                formBrightnessContrast form = new formBrightnessContrast();
+                form.ImgInput = imgList["Input"].Clone();
+                form.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void mNISTRecognitionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            formMNISTRecogntion form = new formMNISTRecogntion();
+            form.ShowDialog();
+        }
+
         private void loadDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
