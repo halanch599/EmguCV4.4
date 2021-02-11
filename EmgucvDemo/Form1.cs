@@ -25,11 +25,17 @@ using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Emgu.CV.Face;
 using Emgu.CV.Stitching;
+using Emgu.CV.Dnn;
 
 namespace EmgucvDemo
 {
     public partial class Form1 : Form
     {
+
+        // Yolo3
+        Net Model = null;
+        List<string> ClassLabels = null;
+
         VideoCapture capture = null;
         IBackgroundSubtractor backgroundSubtractor;
 
@@ -2319,6 +2325,116 @@ namespace EmgucvDemo
 
 
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void loadModelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.Multiselect = true;
+                if (dialog.ShowDialog()==DialogResult.OK)
+                {
+                    var PathWeights = dialog.FileNames.Where(x => x.ToLower().EndsWith(".weights")).First();
+                    var Pathconfig = dialog.FileNames.Where(x => x.ToLower().EndsWith(".cfg")).First();
+                    var PathClasses = dialog.FileNames.Where(x => x.ToLower().EndsWith(".names")).First();
+
+                    Model = DnnInvoke.ReadNetFromDarknet(Pathconfig, PathWeights);
+                    ClassLabels = File.ReadAllLines(PathClasses).ToList();
+                    lblStatus.Text = "Model Loaded.";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void testModelToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (Model==null)
+                {
+                    throw new Exception("Load the model.");
+                }
+
+                float confThreshold = 0.8f;
+                float nmsThreshold = 0.4f;
+                int imgDefaultSize = 416;
+
+                Image<Bgr, byte> img = null;
+
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.Filter = "Image Files(*.jpg;*.png;)|*.jpg;*.png;";
+                if (dialog.ShowDialog()==DialogResult.OK)
+                {
+                    img = new Image<Bgr, byte>(dialog.FileName)
+                        .Resize(imgDefaultSize, imgDefaultSize, Inter.Cubic);
+                }
+
+                var input = DnnInvoke.BlobFromImage(img, 1 / 255.0, swapRB: true);
+                Model.SetInput(input);
+                Model.SetPreferableBackend(Emgu.CV.Dnn.Backend.OpenCV);
+                Model.SetPreferableTarget(Target.Cpu);
+
+                VectorOfMat vectorOfMat = new VectorOfMat();
+                Model.Forward(vectorOfMat, Model.UnconnectedOutLayersNames);
+
+                // post processing
+                VectorOfRect bboxes = new VectorOfRect();
+                VectorOfFloat scores = new VectorOfFloat();
+                VectorOfInt indices = new VectorOfInt();
+
+                for (int k = 0; k < vectorOfMat.Size; k++)
+                {
+                    var mat = vectorOfMat[k];
+                    var data = HelperClass.ArrayTo2DList(mat.GetData());
+
+                    for (int i = 0; i < data.Count; i++)
+                    {
+                        var row = data[i];
+                        var rowsscores = row.Skip(5).ToArray();
+                        var classId = rowsscores.ToList().IndexOf(rowsscores.Max());
+                        var confidence = rowsscores[classId];
+
+                        if (confidence> confThreshold)
+                        {
+                            var center_x = (int)(row[0] * img.Width);
+                            var center_y = (int)(row[1] * img.Height);
+
+                            var width = (int)(row[2] * img.Width);
+                            var height = (int)(row[3] * img.Height);
+
+                            var x = (int)(center_x - (width/2));
+                            var y = (int)(center_y - (height/ 2));
+
+                            bboxes.Push(new Rectangle[] { new Rectangle(x,y,width,height)});
+                            indices.Push(new int[] { classId });
+                            scores.Push(new float[] { confidence });
+                        }
+                    }
+                }
+
+                var idx = DnnInvoke.NMSBoxes(bboxes.ToArray(), scores.ToArray(), confThreshold, nmsThreshold);
+
+                var imgOutput = img.Clone();
+
+                for (int i = 0; i < idx.Length; i++)
+                {
+                    int index = idx[i];
+                    var bbox = bboxes[index];
+                    imgOutput.Draw(bbox, new Bgr(0, 255, 0), 2);
+                    CvInvoke.PutText(imgOutput, ClassLabels[indices[index]], new Point(bbox.X, bbox.Y + 20),
+                        FontFace.HersheySimplex, 1.0, new MCvScalar(0, 0, 255), 2);
+                }
+
+                pictureBox1.Image = imgOutput.AsBitmap();
             }
             catch (Exception ex)
             {
