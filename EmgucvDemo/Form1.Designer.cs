@@ -106,6 +106,9 @@
             this.showResultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dNNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mNISTRecognitionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.yolo3ObjectDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testModelToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblStatus = new System.Windows.Forms.Label();
@@ -113,9 +116,6 @@
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.panel3 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.yolo3ObjectDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.testModelToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -753,6 +753,29 @@
             this.mNISTRecognitionToolStripMenuItem.Text = "MNIST Recognition";
             this.mNISTRecognitionToolStripMenuItem.Click += new System.EventHandler(this.mNISTRecognitionToolStripMenuItem_Click);
             // 
+            // yolo3ObjectDetectionToolStripMenuItem
+            // 
+            this.yolo3ObjectDetectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadModelToolStripMenuItem,
+            this.testModelToolStripMenuItem1});
+            this.yolo3ObjectDetectionToolStripMenuItem.Name = "yolo3ObjectDetectionToolStripMenuItem";
+            this.yolo3ObjectDetectionToolStripMenuItem.Size = new System.Drawing.Size(246, 26);
+            this.yolo3ObjectDetectionToolStripMenuItem.Text = "Yolo3 Object Detection";
+            // 
+            // loadModelToolStripMenuItem
+            // 
+            this.loadModelToolStripMenuItem.Name = "loadModelToolStripMenuItem";
+            this.loadModelToolStripMenuItem.Size = new System.Drawing.Size(172, 26);
+            this.loadModelToolStripMenuItem.Text = "Load Model";
+            this.loadModelToolStripMenuItem.Click += new System.EventHandler(this.loadModelToolStripMenuItem_Click);
+            // 
+            // testModelToolStripMenuItem1
+            // 
+            this.testModelToolStripMenuItem1.Name = "testModelToolStripMenuItem1";
+            this.testModelToolStripMenuItem1.Size = new System.Drawing.Size(172, 26);
+            this.testModelToolStripMenuItem1.Text = "Test Model";
+            this.testModelToolStripMenuItem1.Click += new System.EventHandler(this.testModelToolStripMenuItem1_Click);
+            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
@@ -828,29 +851,6 @@
             this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
-            // 
-            // yolo3ObjectDetectionToolStripMenuItem
-            // 
-            this.yolo3ObjectDetectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadModelToolStripMenuItem,
-            this.testModelToolStripMenuItem1});
-            this.yolo3ObjectDetectionToolStripMenuItem.Name = "yolo3ObjectDetectionToolStripMenuItem";
-            this.yolo3ObjectDetectionToolStripMenuItem.Size = new System.Drawing.Size(246, 26);
-            this.yolo3ObjectDetectionToolStripMenuItem.Text = "Yolo3 Object Detection";
-            // 
-            // loadModelToolStripMenuItem
-            // 
-            this.loadModelToolStripMenuItem.Name = "loadModelToolStripMenuItem";
-            this.loadModelToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.loadModelToolStripMenuItem.Text = "Load Model";
-            this.loadModelToolStripMenuItem.Click += new System.EventHandler(this.loadModelToolStripMenuItem_Click);
-            // 
-            // testModelToolStripMenuItem1
-            // 
-            this.testModelToolStripMenuItem1.Name = "testModelToolStripMenuItem1";
-            this.testModelToolStripMenuItem1.Size = new System.Drawing.Size(224, 26);
-            this.testModelToolStripMenuItem1.Text = "Test Model";
-            this.testModelToolStripMenuItem1.Click += new System.EventHandler(this.testModelToolStripMenuItem1_Click);
             // 
             // Form1
             // 
